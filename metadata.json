@@ -1,0 +1,6 @@
+{
+  "name": "Crowdsourcing Societal Challenges Platform",
+  "description": "Full-stack civic innovation and societal problem crowdsourcing platform (SIH26043) with AI challenge triage, feasibility scoring, geo-spatial heatmaps, and grant funding workflows.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
