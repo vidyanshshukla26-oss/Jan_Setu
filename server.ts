@@ -18,7 +18,7 @@ let aiClient: GoogleGenAI | null = null;
 function getGeminiAI(): GoogleGenAI {
   if (!aiClient) {
     aiClient = new GoogleGenAI({
-      apiKey: process.env.GEMINI_API_KEY || '',
+      apiKey: process.env.GEMINI_API_KEY || 'AQ.Ab8RN6JSV2fHfIEQy0YkItXxFFJbj5E2s319wH3AUzYONWf_1w',
       httpOptions: {
         headers: {
           'User-Agent': 'aistudio-build',
