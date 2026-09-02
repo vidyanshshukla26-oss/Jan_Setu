@@ -1,12 +1,13 @@
 import express from 'express';
 import path from 'path';
+import { pathToFileURL } from 'url';
 import { createServer as createViteServer } from 'vite';
 import { GoogleGenAI, Type } from '@google/genai';
 import { INITIAL_CHALLENGES } from './src/data/seedChallenges';
 import { Challenge, Solution, Comment, AnalyticsSummary } from './src/types';
 
-const app = express();
-const PORT = 3000;
+export const app = express();
+const PORT = Number(process.env.PORT) || 3000;
 
 app.use(express.json({ limit: '10mb' }));
 
@@ -912,4 +913,8 @@ async function startServer() {
   });
 }
 
-startServer();
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  startServer();
+}
+
+export default app;
