@@ -47,8 +47,6 @@ Jan_Setu/
 ├── .env.example
 └── README.md
 ```
-> Adjust this tree to match your actual folder layout if it differs.
-
 ---
 
 ## 🚀 Getting Started
