@@ -2,7 +2,7 @@
 
 **Jan Setu** ("bridge to the people") is a full-stack civic-tech platform that lets citizens crowdsource, triage, and fund solutions to societal challenges. Built for **Smart India Hackathon 2026 (Problem Statement SIH26043)**, it combines AI-driven challenge scoring, geo-spatial visualization, and grant funding workflows to turn community-reported problems into fundable, actionable projects.
 
-🔗 **Live demo:** [phenomenal-pika-2aa7c3.netlify.app](https://phenomenal-pika-2aa7c3.netlify.app/)
+🔗 **Live demo:** [Jan-Setu](https://jan-setu-7vlg.onrender.com)
 
 ---
 
