@@ -1,6 +1,6 @@
 # 🌉 Jan Setu
 
-**Jan Setu** ("bridge to the people") is a full-stack civic-tech platform that lets citizens crowdsource, triage, and fund solutions to societal challenges. Built for **Smart India Hackathon 2026 (Problem Statement SIH26043)**, it combines AI-driven challenge scoring, geo-spatial visualization, and grant funding workflows to turn community-reported problems into fundable, actionable projects.
+**Jan Setu** ("bridge to the people") is a full-stack civic-tech platform where citizens crowdsource, triage, and fund solutions to societal challenges. Built for **Smart India Hackathon 2026 (Problem Statement SIH26043)**, it combines AI-driven challenge triage and feasibility scoring, geo-spatial visualization, and grant/funding workflows to turn community-reported problems into fundable, actionable projects.
 
 🔗 **Live demo:** [Jan-Setu](https://jan-setu-7vlg.onrender.com)
 
@@ -8,54 +8,59 @@
 
 ## ✨ Features
 
-- **📝 Challenge Crowdsourcing** — Citizens submit societal challenges from their communities, with descriptions, categories, and supporting media.
-- **🤖 AI Challenge Triage** — Incoming submissions are automatically classified, deduplicated, and routed using AI, cutting manual review overhead.
-- **📊 Feasibility Scoring** — Each challenge is scored on feasibility, urgency, and impact to help prioritize which problems get attention first.
-- **🗺️ Geo-Spatial Heatmaps** — Interactive maps visualize challenge density and hotspots across regions, helping identify where intervention is needed most.
-- **💰 Grant & Funding Workflows** — A structured pipeline connects viable challenges with funding opportunities, from proposal to disbursement tracking.
-- **👥 Community Engagement** — Voting, commenting, and progress tracking keep citizens involved from submission to resolution.
+- **📝 Challenge Crowdsourcing** — Citizens submit societal challenges with a title, category, SDG alignment, location, severity, and supporting images.
+- **🤖 AI Challenge Triage** — Gemini-powered analysis classifies, scores severity/urgency, and flags likely duplicate submissions.
+- **📊 Feasibility & Solution Evaluation** — AI evaluates submitted solutions (TRL level, budget, methodology) and scores their feasibility.
+- **🗺️ Geo-Spatial Data** — Challenges carry lat/long + city/state, ready for map/heatmap visualization of hotspots.
+- **💰 Grant & Funding Workflows** — Bounties, sponsor pledges, and AI-generated formal grant/pilot proposals (targeted at bodies like Smart Cities Mission, Jal Jeevan Mission, MeitY, NITI Aayog, and CSR foundations).
+- **🗣️ Multilingual Assist** — Converts vernacular-language input into a structured English problem statement with bilingual confirmation.
+- **💬 JanSetu AI Civic Assistant** — A chatbot that helps citizens, student innovators, and officials navigate the platform.
+- **👥 Community Engagement** — Upvoting on challenges and solutions, commenting, and solution endorsements.
 
 ---
 
 ## 🛠️ Tech Stack
 
-| Layer          | Technology                     |
-|----------------|---------------------------------|
-| Frontend       | React                            |
-| Backend        | Node.js + Express                |
-| Database       | MongoDB                          |
-| Hosting        | Render |
+| Layer         | Technology                                      |
+|---------------|--------------------------------------------------|
+| Frontend      | React 19 + Vite 6 + TypeScript + Tailwind CSS v4 |
+| Backend       | Node.js + Express (single `server.ts`)           |
+| AI            | Google Gemini API (`@google/genai`)               |
+| Data storage  | In-memory store, seeded on server start (no database) |
+| Hosting       | Render (current live deploy); `vercel.json` included for Vercel |
+
+> Note: there is no MongoDB or separate `client/`/`server/` split in this repo — data currently lives in memory and resets on server restart. Anything persistent (users, challenges, solutions) would need a database added.
 
 ---
 
 ## 📁 Project Structure
 
 ```
-Jan_Setu/
-├── client/              # React frontend
-│   ├── src/
-│   │   ├── components/
-│   │   ├── pages/
-│   │   └── App.js
-│   └── package.json
-├── server/              # Node/Express backend
-│   ├── controllers/
-│   ├── models/
-│   ├── routes/
-│   ├── config/
-│   └── server.js
+jan-setu/
+├── server.ts              # Express app: REST API + Vite middleware (dev) / static serving (prod)
+├── src/
+│   ├── main.tsx            # React app entry
+│   ├── data/
+│   │   └── seedChallenges.ts   # Initial in-memory challenge data
+│   └── types.ts            # Shared TypeScript types (Challenge, Solution, Comment, ...)
+├── index.html               # Vite HTML entry point
+├── vite.config.ts
+├── tsconfig.json
+├── vercel.json              # Rewrites for optional Vercel deployment
+├── metadata.json            # AI Studio app metadata
 ├── .env.example
-└── README.md
+└── package.json
 ```
+
 ---
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/) (v18 or higher recommended)
-- [MongoDB](https://www.mongodb.com/) (local instance or a [MongoDB Atlas](https://www.mongodb.com/atlas) cluster)
-- npm or yarn
+- [Node.js](https://nodejs.org/) v18+
+- A [Gemini API key](https://ai.google.dev/) (for the AI triage, scoring, proposal-generation, and chatbot features)
+- npm, or [bun](https://bun.sh/) (a `bun.lock` is included)
 
 ### 1. Clone the repository
 
@@ -67,79 +72,81 @@ cd Jan_Setu
 ### 2. Install dependencies
 
 ```bash
-# Backend
-cd server
 npm install
-
-# Frontend
-cd ../client
-npm install
+# or
+bun install
 ```
 
 ### 3. Configure environment variables
 
-Create a `.env` file inside `server/` (use `.env.example` as a template):
+Copy `.env.example` to `.env` and fill in your values:
 
 ```env
-# Server
-PORT=5000
-NODE_ENV=development
+# Required for Gemini AI API calls (challenge triage, scoring, proposals, chatbot, multilingual assist)
+GEMINI_API_KEY="your_gemini_api_key_here"
 
-# Database
-MONGODB_URI=mongodb://localhost:27017/jansetu
-# or your Atlas connection string:
-# MONGODB_URI=mongodb+srv://<user>:<password>@cluster.mongodb.net/jansetu
-
-# Auth
-JWT_SECRET=your_jwt_secret_here
-
-# AI / Third-party services (if used for triage & scoring)
-AI_API_KEY=your_ai_service_key_here
-
-# Maps (for geo-spatial heatmaps)
-MAPS_API_KEY=your_maps_api_key_here
+# URL where the app is hosted (used for self-referential links / callbacks)
+APP_URL="http://localhost:3000"
 ```
 
-Create a `.env` file inside `client/` if the frontend needs its own variables:
-
-```env
-REACT_APP_API_BASE_URL=http://localhost:5000/api
-REACT_APP_MAPS_API_KEY=your_maps_api_key_here
-```
-
-> ⚠️ Never commit `.env` files. Add them to `.gitignore` and keep `.env.example` updated with placeholder keys.
+> ⚠️ Never commit `.env` files — they're already covered by `.gitignore`. Only `.env.example` should be committed.
 
 ### 4. Run the app locally
 
 ```bash
-# Start the backend (from /server)
-npm run dev
-
-# In a separate terminal, start the frontend (from /client)
 npm start
 ```
 
-- Backend runs on `http://localhost:5000`
-- Frontend runs on `http://localhost:3000`
+This runs `tsx server.ts`, which starts Express with Vite in middleware mode — a single server on **http://localhost:3000** serving both the React frontend (with HMR) and the `/api/*` routes.
+
+If you only want the Vite dev server without the API (e.g. for pure frontend work), you can instead run:
+
+```bash
+npm run dev
+```
 
 ### 5. Build for production
 
 ```bash
-cd client
-npm run build
+npm run build   # builds the frontend into dist/
+NODE_ENV=production npm start   # serves dist/ + API from the same Express server
 ```
 
-Deploy the resulting `build/` folder (e.g., to Netlify) and point it at your hosted backend API.
+---
+
+## 📡 API Overview
+
+All routes are prefixed with `/api`. Highlights:
+
+| Route | Method | Purpose |
+|---|---|---|
+| `/api/health` | GET | Health check + total challenge count |
+| `/api/challenges` | GET | List challenges (filter/search/sort) |
+| `/api/challenges/:id` | GET | Get a single challenge |
+| `/api/challenges` | POST | Submit a new challenge |
+| `/api/challenges/:id/vote` | POST | Upvote/un-upvote a challenge |
+| `/api/challenges/:id/solutions` | POST | Submit a solution to a challenge |
+| `/api/challenges/:id/comments` | POST | Comment on a challenge |
+| `/api/challenges/:id/pledge` | POST | Pledge sponsor funding |
+| `/api/solutions/:id/vote` | POST | Upvote a solution |
+| `/api/solutions/:id/endorse` | POST | Endorse a solution |
+| `/api/analytics` | GET | Platform-wide analytics summary |
+| `/api/ai/analyze-challenge` | POST | AI triage: classify/score a new challenge |
+| `/api/ai/evaluate-solution` | POST | AI feasibility scoring for a solution |
+| `/api/ai/duplicate-check` | POST | AI duplicate-challenge detection |
+| `/api/ai/generate-proposal` | POST | AI-generated grant/pilot proposal |
+| `/api/ai/civic-assistant` | POST | JanSetu AI chatbot |
+| `/api/ai/multilingual-assist` | POST | Vernacular-language problem drafting |
 
 ---
 
 ## 🧭 Usage
 
-1. Sign up / log in as a citizen.
-2. Submit a societal challenge with a description, category, and location.
-3. The AI triage pipeline classifies and scores the challenge for feasibility.
-4. View challenges on the geo-spatial heatmap to spot regional hotspots.
-5. Eligible, high-scoring challenges enter the grant/funding workflow for review and disbursement tracking.
+1. Browse or submit a societal challenge with a description, category, and location.
+2. The AI triage pipeline classifies, scores, and checks the challenge for duplicates.
+3. Innovators submit solutions; AI scores their feasibility.
+4. Sponsors pledge bounty funding, and high-scoring challenges can generate a formal grant proposal via AI.
+5. Citizens engage by upvoting and commenting throughout.
 
 ---
 
