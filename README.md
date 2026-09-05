@@ -24,7 +24,7 @@
 | Frontend       | React                            |
 | Backend        | Node.js + Express                |
 | Database       | MongoDB                          |
-| Hosting        | Netlify (frontend) / your choice for backend |
+| Hosting        | Render |
 
 ---
 
