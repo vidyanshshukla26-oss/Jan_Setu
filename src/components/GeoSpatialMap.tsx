@@ -35,13 +35,13 @@ export const GeoSpatialMap: React.FC<GeoSpatialMapProps> = ({
     return true;
   });
 
-  // Calculate coordinates mapping for India bounding box
-  // Lat: 8.4 to 37.6, Lng: 68.7 to 97.25
+  const countryCount = new Set(filtered.map((challenge) => challenge.location.country)).size;
+
   const getMapPosition = (lat: number, lng: number) => {
-    const minLat = 7.0;
-    const maxLat = 36.0;
-    const minLng = 68.0;
-    const maxLng = 96.0;
+    const minLat = -60;
+    const maxLat = 80;
+    const minLng = -180;
+    const maxLng = 180;
 
     const x = ((lng - minLng) / (maxLng - minLng)) * 100;
     const y = ((maxLat - lat) / (maxLat - minLat)) * 100;
@@ -78,7 +78,7 @@ export const GeoSpatialMap: React.FC<GeoSpatialMapProps> = ({
               GeoSpatial Societal Problem Radar & Hotspot Map
             </h2>
             <p className="text-xs text-slate-500">
-              Live geocoded clusters, critical urgency zones, and regional deployment telemetry.
+              Global geocoded clusters, critical urgency zones, and regional deployment telemetry.
             </p>
           </div>
         </div>
@@ -154,9 +154,19 @@ export const GeoSpatialMap: React.FC<GeoSpatialMapProps> = ({
                   </pattern>
                 </defs>
                 <rect width="100%" height="100%" fill="url(#grid-pattern)" />
-                {/* Radar Grid Circles */}
-                <circle cx="50%" cy="50%" r="180" fill="none" stroke="#38bdf8" strokeWidth="1" strokeDasharray="4 4" opacity="0.2" />
-                <circle cx="50%" cy="50%" r="300" fill="none" stroke="#38bdf8" strokeWidth="1" opacity="0.15" />
+                <g fill="#164e63" stroke="#22d3ee" strokeWidth="0.7" opacity="0.72">
+                  <path d="M10 25 18 16 29 13 39 17 46 25 42 32 34 34 29 42 21 40 17 34 11 32Z" />
+                  <path d="M31 47 38 51 42 62 39 76 34 88 29 79 30 68 26 58Z" />
+                  <path d="M47 22 53 16 61 14 69 18 75 27 72 34 65 35 61 42 54 39 52 31 46 29Z" />
+                  <path d="M73 21 82 17 91 20 95 27 91 33 85 32 82 39 76 36 78 29 72 27Z" />
+                  <path d="M78 45 87 43 94 48 91 55 84 56 81 64 75 60 77 53 72 49Z" />
+                  <path d="M50 45 55 48 57 54 53 57 49 53Z" />
+                </g>
+                <g fill="none" stroke="#38bdf8" strokeWidth="1" opacity="0.2">
+                  <ellipse cx="50%" cy="50%" rx="42%" ry="44%" />
+                  <ellipse cx="50%" cy="50%" rx="21%" ry="44%" />
+                  <path d="M8 50h84M14 34h72M14 66h72" />
+                </g>
               </svg>
             )}
 
@@ -174,6 +184,10 @@ export const GeoSpatialMap: React.FC<GeoSpatialMapProps> = ({
             <div className="flex items-center gap-2 bg-slate-900/80 backdrop-blur-md px-3 py-1.5 rounded-lg border border-slate-700">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
               <span className="font-semibold text-slate-200">Active Sensors & Radar: {filtered.length} Hotspots</span>
+            </div>
+
+            <div className="hidden sm:block bg-slate-900/80 backdrop-blur-md px-3 py-1.5 rounded-lg border border-slate-700 text-[11px] text-cyan-200">
+              {countryCount} {countryCount === 1 ? 'country' : 'countries'} covered
             </div>
 
             <div className="hidden sm:flex items-center gap-3 bg-slate-900/80 backdrop-blur-md px-3 py-1.5 rounded-lg border border-slate-700 text-[11px]">
@@ -233,7 +247,7 @@ export const GeoSpatialMap: React.FC<GeoSpatialMapProps> = ({
 
           {/* Bottom Coordinates & Live HUD */}
           <div className="relative z-10 flex items-center justify-between text-[11px] text-slate-400 pt-2 border-t border-slate-800">
-            <span>Projection: WGS84 Geographic • India Spatial Grid</span>
+            <span>Projection: WGS84 Geographic • Global Mercator View</span>
             <span>Click any hotspot pin to inspect deep dive</span>
           </div>
         </div>
