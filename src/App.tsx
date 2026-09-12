@@ -97,14 +97,14 @@ export function App() {
     try {
       const res = await fetch(`/api/challenges/${challengeId}/vote`, { method: 'POST' });
       const data = await res.json();
-      if (data.success && data.data) {
+      if (data.success && typeof data.upvotes === 'number') {
         setChallenges((prev) =>
           prev.map((c) =>
             c.id === challengeId
               ? {
                   ...c,
-                  upvotes: data.data.upvotes,
-                  hasUpvoted: data.data.hasUpvoted,
+                  upvotes: data.upvotes,
+                  hasUpvoted: data.hasUpvoted,
                 }
               : c
           )
@@ -114,8 +114,8 @@ export function App() {
             prev
               ? {
                   ...prev,
-                  upvotes: data.data.upvotes,
-                  hasUpvoted: data.data.hasUpvoted,
+                  upvotes: data.upvotes,
+                  hasUpvoted: data.hasUpvoted,
                 }
               : null
           );
@@ -417,7 +417,7 @@ export function App() {
         )}
 
         {/* TAB 4: AI PROPOSAL STUDIO */}
-        {currentTab === 'proposals' && (
+        {currentTab === 'proposal-studio' && (
           <AIProposalStudio
             challenges={challenges}
             preselectedChallenge={proposalTargetChallenge}
