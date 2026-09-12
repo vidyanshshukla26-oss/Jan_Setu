@@ -14,7 +14,8 @@ interface RankingRow {
 }
 
 export const Leaderboard: React.FC<LeaderboardProps> = ({ challenges }) => {
-  const contributors = challenges.reduce<RankingRow[]>((rows, challenge) => {
+  const contributors: RankingRow[] = [];
+  challenges.forEach((challenge) => {
     const name = challenge.reportedBy.name;
     const existing = rows.find((row) => row.name === name);
     const score = challenge.upvotes + challenge.comments.length * 2 + challenge.solutionsCount * 4;
@@ -29,8 +30,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ challenges }) => {
         icon: <Users className="w-4 h-4" />,
       });
     }
-    return rows;
-  }, []);
+  });
 
   const solutionTeams = challenges.flatMap((challenge) =>
     challenge.solutions.map((solution) => ({
