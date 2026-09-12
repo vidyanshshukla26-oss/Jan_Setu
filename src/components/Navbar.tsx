@@ -300,6 +300,14 @@ export const Navbar: React.FC<NavbarProps> = ({
         >
           Impact
         </button>
+        <button
+          onClick={() => setCurrentTab('leaderboard')}
+          className={`px-2.5 py-1 rounded-md font-semibold whitespace-nowrap text-xs ${
+            currentTab === 'leaderboard' ? 'bg-blue-50 text-blue-700' : 'text-gray-600'
+          }`}
+        >
+          Rankings
+        </button>
       </div>
     </header>
   );
