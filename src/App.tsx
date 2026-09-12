@@ -17,7 +17,7 @@ import {
   RefreshCw,
   MessageSquare
 } from 'lucide-react';
-import { Challenge, Solution, UserRole, AnalyticsSummary, ChallengeCategory } from './types';
+import { Challenge, Solution, UserRole, AnalyticsSummary, ChallengeCategory, AppTab } from './types';
 import { Navbar } from './components/Navbar';
 import { ChallengeCard } from './components/ChallengeCard';
 import { ChallengeDetailModal } from './components/ChallengeDetailModal';
@@ -53,7 +53,7 @@ export function App() {
   const [selectedStatus, setSelectedStatus] = useState<string>('All');
   const [sortBy, setSortBy] = useState<'upvotes' | 'bounty' | 'urgency' | 'newest'>('upvotes');
   const [userRole, setUserRole] = useState<UserRole>('innovator');
-  const [currentTab, setCurrentTab] = useState<'challenges' | 'map' | 'bounties' | 'proposal-studio' | 'analytics' | 'leaderboard'>('challenges');
+  const [currentTab, setCurrentTab] = useState<AppTab>('challenges');
 
   // Modal States
   const [selectedChallenge, setSelectedChallenge] = useState<Challenge | null>(null);

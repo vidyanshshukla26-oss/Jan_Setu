@@ -16,11 +16,11 @@ import {
   GraduationCap,
   HeartHandshake
 } from 'lucide-react';
-import { UserRole } from '../types';
+import { AppTab, UserRole } from '../types';
 
 interface NavbarProps {
   currentTab: string;
-  setCurrentTab: (tab: string) => void;
+  setCurrentTab: (tab: AppTab) => void;
   userRole: UserRole;
   setUserRole: (role: UserRole) => void;
   onOpenSubmitChallenge: () => void;

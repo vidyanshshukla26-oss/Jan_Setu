@@ -20,6 +20,8 @@ export type ChallengeStatus =
 
 export type UserRole = 'citizen' | 'innovator' | 'government_csr' | 'evaluator';
 
+export type AppTab = 'challenges' | 'map' | 'bounties' | 'proposal-studio' | 'analytics' | 'leaderboard';
+
 export interface LocationData {
   city: string;
   state: string;
