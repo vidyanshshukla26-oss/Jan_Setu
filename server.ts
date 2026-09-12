@@ -42,6 +42,8 @@ app.get('/api/health', (req, res) => {
   res.json({
     status: 'ok',
     totalChallenges: challenges.length,
+    totalSolutions: challenges.reduce((total, challenge) => total + challenge.solutions.length, 0),
+    uptimeSeconds: Math.round(process.uptime()),
     timestamp: new Date().toISOString(),
   });
 });
