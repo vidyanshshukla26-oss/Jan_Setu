@@ -191,7 +191,12 @@ app.post('/api/challenges/:id/vote', (req, res) => {
     challenge.hasUpvoted = true;
   }
 
-  res.json({ success: true, upvotes: challenge.upvotes, hasUpvoted: challenge.hasUpvoted });
+  res.json({
+    success: true,
+    upvotes: challenge.upvotes,
+    hasUpvoted: challenge.hasUpvoted,
+    data: { upvotes: challenge.upvotes, hasUpvoted: challenge.hasUpvoted },
+  });
 });
 
 // 6. Submit a solution to a challenge
