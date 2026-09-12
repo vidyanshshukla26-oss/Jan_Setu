@@ -375,7 +375,7 @@ export function App() {
                 </div>
                 <div>
                   <div className="text-xl font-bold text-gray-900">
-                    {analytics ? analytics.totalSolutions : '142'}
+                    {analytics ? analytics.activeInnovatorTeams : '142'}
                   </div>
                   <div className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">
                     Validated Solutions
@@ -389,7 +389,7 @@ export function App() {
                 </div>
                 <div>
                   <div className="text-xl font-bold text-gray-900">
-                    ₹{analytics ? (analytics.totalBountyAmountINR / 100000).toFixed(1) : '21.0'}L
+                    ₹{analytics ? (analytics.totalBountyPool / 100000).toFixed(1) : '21.0'}L
                   </div>
                   <div className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">
                     Disbursed Grants

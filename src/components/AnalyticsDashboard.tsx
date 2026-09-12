@@ -51,12 +51,12 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
               <Target className="w-4 h-4" />
             </div>
           </div>
-          <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-900 font-['Space_Grotesk']">
-            {analytics.totalChallenges}
+            <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-900 font-['Space_Grotesk']">
+              {analytics.activeInnovatorTeams}
           </h3>
           <p className="text-[11px] text-emerald-700 font-semibold flex items-center gap-1">
             <CheckCircle2 className="w-3.5 h-3.5" />
-            <span>{analytics.verifiedChallengesCount} Verified by Authorities</span>
+              <span>{analytics.resolvedChallenges} Resolved or piloting</span>
           </p>
         </div>
 
@@ -67,11 +67,11 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
               <Lightbulb className="w-4 h-4" />
             </div>
           </div>
-          <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-900 font-['Space_Grotesk']">
-            {analytics.totalSolutions}
+            <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-900 font-['Space_Grotesk']">
+              {analytics.resolvedChallenges}
           </h3>
           <p className="text-[11px] text-indigo-700 font-semibold flex items-center gap-1">
-            <span>{analytics.activePilotsCount} Active Field Pilots</span>
+              <span>{analytics.activeInnovatorTeams} Active solution teams</span>
           </p>
         </div>
 
@@ -82,8 +82,8 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
               <Award className="w-4 h-4" />
             </div>
           </div>
-          <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-900 font-['Space_Grotesk']">
-            ₹{(analytics.totalBountyAmountINR / 100000).toFixed(1)}L
+            <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-900 font-['Space_Grotesk']">
+              ₹{(analytics.totalBountyPool / 100000).toFixed(1)}L
           </h3>
           <p className="text-[11px] text-amber-800 font-semibold">
             Across CSR & Mission Grants
@@ -97,8 +97,8 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
               <Users className="w-4 h-4" />
             </div>
           </div>
-          <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-900 font-['Space_Grotesk']">
-            {analytics.totalImpactedPopulation.toLocaleString()}
+            <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-900 font-['Space_Grotesk']">
+              {analytics.totalCitizensImpacted.toLocaleString()}
           </h3>
           <p className="text-[11px] text-teal-700 font-semibold">
             In 18+ Targeted Districts
@@ -118,7 +118,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
           </div>
 
           <div className="space-y-3">
-            {analytics.challengesByCategory.map((item) => {
+              {analytics.categoryStats.map((item) => {
               const pct = Math.round((item.count / analytics.totalChallenges) * 100);
               return (
                 <div key={item.category} className="space-y-1">
@@ -148,7 +148,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
           </div>
 
           <div className="space-y-3">
-            {analytics.challengesByState.map((st) => (
+              {analytics.regionalBreakdown.map((st) => (
               <div
                 key={st.state}
                 className="p-3 bg-slate-50 rounded-xl border border-slate-100 flex items-center justify-between text-xs"
@@ -158,8 +158,8 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
                   <span className="font-bold text-slate-900">{st.state}</span>
                 </div>
                 <div className="flex items-center gap-4">
-                  <span className="text-slate-600 font-medium">
-                    {st.impacted.toLocaleString()} citizens
+                    <span className="text-slate-600 font-medium">
+                      {st.resolved.toLocaleString()} resolved
                   </span>
                   <span className="px-2 py-0.5 bg-emerald-100 text-emerald-800 font-bold rounded-md">
                     {st.count} Issues
