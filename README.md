@@ -16,6 +16,8 @@
 - **🗣️ Multilingual Assist** — Converts vernacular-language input into a structured English problem statement with bilingual confirmation.
 - **💬 JanSetu AI Civic Assistant** — A chatbot that helps citizens, student innovators, and officials navigate the platform.
 - **👥 Community Engagement** — Upvoting on challenges and solutions, commenting, and solution endorsements.
+- **🔥 Impact Rankings** — Live rankings for civic contributors, solution teams, and the most discussed challenges.
+- **🛡️ Operational Resilience** — Retryable data loading, API validation, health telemetry, and consistent AI assistant contracts.
 
 ---
 
