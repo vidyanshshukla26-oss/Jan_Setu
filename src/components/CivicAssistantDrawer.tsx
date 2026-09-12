@@ -171,6 +171,7 @@ How may I assist you today?`,
               }
               className="p-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition-colors"
               title="Clear chat"
+              aria-label="Clear chat history"
             >
               <Trash2 className="w-4 h-4" />
             </button>
@@ -178,6 +179,7 @@ How may I assist you today?`,
             <button
               onClick={onClose}
               className="p-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition-colors"
+              aria-label="Close civic assistant"
             >
               <X className="w-5 h-5" />
             </button>
