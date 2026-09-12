@@ -28,6 +28,7 @@ import { BountiesSection } from './components/BountiesSection';
 import { AIProposalStudio } from './components/AIProposalStudio';
 import { AnalyticsDashboard } from './components/AnalyticsDashboard';
 import { CivicAssistantDrawer } from './components/CivicAssistantDrawer';
+import { Leaderboard } from './components/Leaderboard';
 
 const CATEGORIES: ChallengeCategory[] = [
   'Water & Sanitation',
@@ -50,7 +51,7 @@ export function App() {
   const [selectedSeverity, setSelectedSeverity] = useState<string>('All');
   const [sortBy, setSortBy] = useState<'upvotes' | 'bounty' | 'urgency' | 'newest'>('upvotes');
   const [userRole, setUserRole] = useState<UserRole>('innovator');
-  const [currentTab, setCurrentTab] = useState<'challenges' | 'map' | 'bounties' | 'proposals' | 'analytics'>('challenges');
+  const [currentTab, setCurrentTab] = useState<'challenges' | 'map' | 'bounties' | 'proposal-studio' | 'analytics' | 'leaderboard'>('challenges');
 
   // Modal States
   const [selectedChallenge, setSelectedChallenge] = useState<Challenge | null>(null);
@@ -429,6 +430,8 @@ export function App() {
         {currentTab === 'analytics' && (
           <AnalyticsDashboard analytics={analytics} challenges={challenges} />
         )}
+
+        {currentTab === 'leaderboard' && <Leaderboard challenges={challenges} />}
       </main>
 
       {/* High Density Footer */}
