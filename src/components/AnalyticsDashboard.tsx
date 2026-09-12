@@ -119,7 +119,9 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
 
           <div className="space-y-3">
               {analytics.categoryStats.map((item) => {
-              const pct = Math.round((item.count / analytics.totalChallenges) * 100);
+              const pct = analytics.totalChallenges > 0
+                ? Math.round((item.count / analytics.totalChallenges) * 100)
+                : 0;
               return (
                 <div key={item.category} className="space-y-1">
                   <div className="flex items-center justify-between text-xs font-medium">
