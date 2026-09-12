@@ -89,10 +89,10 @@ How may I assist you today?`,
 
     try {
       // Build conversation history format for API
-      const history = messages
+      const history = [...messages, userMsg]
         .filter((m) => m.id !== 'welcome')
         .map((m) => ({
-          role: m.sender === 'user' ? 'user' : 'model',
+          sender: m.sender,
           text: m.text,
         }));
 
@@ -101,18 +101,18 @@ How may I assist you today?`,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           userQuery: query,
-          conversationHistory: history,
+          messages: history,
           userRole,
-          currentChallengeContext: activeChallengeTitle,
+          currentContext: activeChallengeTitle,
         }),
       });
 
       const data = await res.json();
-      if (data.success && data.data?.reply) {
+      if (data.success && data.text) {
         const assistantMsg: Message = {
           id: (Date.now() + 1).toString(),
           sender: 'assistant',
-          text: data.data.reply,
+          text: data.text,
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         };
         setMessages((prev) => [...prev, assistantMsg]);
