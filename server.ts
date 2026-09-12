@@ -200,6 +200,12 @@ app.post('/api/challenges/:id/solutions', (req, res) => {
   }
 
   const solData = req.body;
+  if (typeof solData.title !== 'string' || solData.title.trim().length < 8) {
+    return res.status(400).json({ success: false, error: 'Solution title must be at least 8 characters' });
+  }
+  if (typeof solData.abstract !== 'string' || solData.abstract.trim().length < 30) {
+    return res.status(400).json({ success: false, error: 'Solution abstract must be at least 30 characters' });
+  }
   const newSolution: Solution = {
     id: `SOL-${Date.now().toString().slice(-4)}`,
     challengeId: challenge.id,
