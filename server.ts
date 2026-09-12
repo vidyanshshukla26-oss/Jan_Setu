@@ -793,7 +793,7 @@ Return a structured JSON with comprehensive formal executive pitch, budget justi
 // E. JanSetu AI Civic Assistant Chatbot
 app.post('/api/ai/civic-assistant', async (req, res) => {
   try {
-    const { messages, userRole, currentContext } = req.body;
+    const { messages = [], userRole, currentContext } = req.body;
     const ai = getGeminiAI();
 
     const systemInstruction = `You are "JanSetu AI", an intelligent, empathetic, and knowledgeable Civic Innovation AI Assistant powering the SIH26043 Crowdsourcing Societal Challenges Platform.
