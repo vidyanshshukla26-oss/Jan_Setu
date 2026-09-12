@@ -46,6 +46,7 @@ export function App() {
   const [challenges, setChallenges] = useState<Challenge[]>([]);
   const [analytics, setAnalytics] = useState<AnalyticsSummary | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [selectedSeverity, setSelectedSeverity] = useState<string>('All');
@@ -68,6 +69,7 @@ export function App() {
   const fetchData = async () => {
     try {
       setLoading(true);
+      setLoadError(null);
       const [chRes, anRes] = await Promise.all([
         fetch('/api/challenges'),
         fetch('/api/analytics'),
@@ -83,6 +85,7 @@ export function App() {
       }
     } catch (err) {
       console.error('Fetch error:', err);
+      setLoadError('The civic data service is temporarily unavailable.');
     } finally {
       setLoading(false);
     }
@@ -300,6 +303,15 @@ export function App() {
               <div className="py-16 text-center text-gray-500 space-y-2">
                 <RefreshCw className="w-8 h-8 mx-auto animate-spin text-blue-600" />
                 <p className="text-xs font-semibold">Loading societal challenges database...</p>
+              </div>
+            ) : loadError ? (
+              <div className="py-16 text-center bg-white rounded-xl border border-red-200 p-8 space-y-3">
+                <AlertTriangle className="w-10 h-10 text-red-500 mx-auto" />
+                <h3 className="text-base font-bold text-gray-800">Could not load live challenges</h3>
+                <p className="text-xs text-gray-500">{loadError}</p>
+                <button onClick={fetchData} className="px-4 py-2 bg-gray-900 text-white text-xs font-semibold rounded-lg hover:bg-black">
+                  Retry connection
+                </button>
               </div>
             ) : filteredChallenges.length === 0 ? (
               <div className="py-16 text-center bg-white rounded-xl border border-dashed border-gray-300 p-8 space-y-3">
