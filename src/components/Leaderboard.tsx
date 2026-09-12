@@ -17,13 +17,13 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ challenges }) => {
   const contributors: RankingRow[] = [];
   challenges.forEach((challenge) => {
     const name = challenge.reportedBy.name;
-    const existing = rows.find((row) => row.name === name);
+    const existing = contributors.find((row) => row.name === name);
     const score = challenge.upvotes + challenge.comments.length * 2 + challenge.solutionsCount * 4;
     if (existing) {
       existing.score += score;
       existing.detail = `${challenge.reportedBy.role} • ${existing.score} impact points`;
     } else {
-      rows.push({
+      contributors.push({
         name,
         detail: `${challenge.reportedBy.role} • ${score} impact points`,
         score,
