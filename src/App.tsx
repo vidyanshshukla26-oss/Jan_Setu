@@ -50,6 +50,7 @@ export function App() {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [selectedSeverity, setSelectedSeverity] = useState<string>('All');
+  const [selectedStatus, setSelectedStatus] = useState<string>('All');
   const [sortBy, setSortBy] = useState<'upvotes' | 'bounty' | 'urgency' | 'newest'>('upvotes');
   const [userRole, setUserRole] = useState<UserRole>('innovator');
   const [currentTab, setCurrentTab] = useState<'challenges' | 'map' | 'bounties' | 'proposal-studio' | 'analytics' | 'leaderboard'>('challenges');
@@ -135,6 +136,7 @@ export function App() {
     .filter((c) => {
       if (selectedCategory !== 'All' && c.category !== selectedCategory) return false;
       if (selectedSeverity !== 'All' && c.severity !== selectedSeverity) return false;
+      if (selectedStatus !== 'All' && c.status !== selectedStatus) return false;
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase();
         const matchTitle = c.title.toLowerCase().includes(q);
@@ -204,6 +206,7 @@ export function App() {
                   onClick={() => {
                     setSelectedCategory('All');
                     setSelectedSeverity('All');
+                    setSelectedStatus('All');
                     setSearchQuery('');
                   }}
                   className="px-3.5 py-1.5 bg-white border border-gray-200 rounded-lg text-xs font-semibold text-gray-700 hover:bg-gray-50 shadow-2xs transition-all cursor-pointer"
@@ -248,6 +251,18 @@ export function App() {
                     <option value="High">High Urgency</option>
                     <option value="Medium">Medium</option>
                     <option value="Low">Low</option>
+                  </select>
+
+                  <select
+                    value={selectedStatus}
+                    onChange={(e) => setSelectedStatus(e.target.value)}
+                    className="px-2.5 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-xs font-semibold text-gray-700 cursor-pointer"
+                  >
+                    <option value="All">All Statuses</option>
+                    <option value="open_for_solutions">Open for solutions</option>
+                    <option value="under_review">Under review</option>
+                    <option value="pilot_in_progress">Pilot in progress</option>
+                    <option value="resolved">Resolved</option>
                   </select>
 
                   {/* Sorting dropdown */}
@@ -325,6 +340,7 @@ export function App() {
                     setSearchQuery('');
                     setSelectedCategory('All');
                     setSelectedSeverity('All');
+                    setSelectedStatus('All');
                   }}
                   className="px-4 py-2 bg-gray-900 text-white text-xs font-semibold rounded-lg hover:bg-black"
                 >
