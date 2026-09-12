@@ -18,8 +18,11 @@ let challenges: Challenge[] = JSON.parse(JSON.stringify(INITIAL_CHALLENGES));
 let aiClient: GoogleGenAI | null = null;
 function getGeminiAI(): GoogleGenAI {
   if (!aiClient) {
+    if (!process.env.GEMINI_API_KEY) {
+      throw new Error('GEMINI_API_KEY is required for AI features');
+    }
     aiClient = new GoogleGenAI({
-      apiKey: process.env.GEMINI_API_KEY || 'AQ.Ab8RN6JSV2fHfIEQy0YkItXxFFJbj5E2s319wH3AUzYONWf_1w',
+      apiKey: process.env.GEMINI_API_KEY,
       httpOptions: {
         headers: {
           'User-Agent': 'aistudio-build',
