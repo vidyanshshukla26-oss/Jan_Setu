@@ -120,6 +120,12 @@ app.get('/api/challenges/:id', (req, res) => {
 app.post('/api/challenges', async (req, res) => {
   try {
     const newChallengeData = req.body;
+    if (typeof newChallengeData.title !== 'string' || newChallengeData.title.trim().length < 8) {
+      return res.status(400).json({ success: false, error: 'Challenge title must be at least 8 characters' });
+    }
+    if (typeof newChallengeData.description !== 'string' || newChallengeData.description.trim().length < 30) {
+      return res.status(400).json({ success: false, error: 'Challenge description must be at least 30 characters' });
+    }
     const challengeId = `CH-26043-${String(challenges.length + 1).padStart(3, '0')}`;
 
     const newChallenge: Challenge = {
