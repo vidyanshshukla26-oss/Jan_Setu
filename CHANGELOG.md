@@ -5,3 +5,4 @@
 - feat: add claim queue indicators
 - feat: improve search experience
 - feat: add mission alignment badges
+- feat: add funding readiness metrics
