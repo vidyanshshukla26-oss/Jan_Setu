@@ -10,3 +10,4 @@
 - feat: add local dispatch indicators
 - feat: add AI confidence score banner
 - feat: add civic operations snapshot
+- feat: add feature stack overview
