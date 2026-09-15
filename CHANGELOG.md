@@ -15,3 +15,4 @@
 - feat: add challenge bookmarking UI
 - feat: add quick access action chips
 - feat: add UI polish for hero section
+- feat: add responsive layout improvements
