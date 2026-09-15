@@ -1,2 +1,3 @@
 - feat: add civic dashboard summary cards
 - feat: add saved challenge tracking
+- feat: add verified-only filter
