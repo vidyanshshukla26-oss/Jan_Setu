@@ -4,3 +4,4 @@
 - feat: add high-priority triage toggles
 - feat: add claim queue indicators
 - feat: improve search experience
+- feat: add mission alignment badges
