@@ -17,3 +17,4 @@
 - feat: add UI polish for hero section
 - feat: add responsive layout improvements
 - feat: add metadata highlights for impact
+- feat: add dashboard status telemetry
