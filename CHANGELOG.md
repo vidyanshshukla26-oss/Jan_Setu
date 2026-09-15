@@ -8,3 +8,4 @@
 - feat: add funding readiness metrics
 - feat: add volunteer coverage insight
 - feat: add local dispatch indicators
+- feat: add AI confidence score banner
