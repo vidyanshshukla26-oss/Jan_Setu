@@ -14,3 +14,4 @@
 - feat: add issue priority filters
 - feat: add challenge bookmarking UI
 - feat: add quick access action chips
+- feat: add UI polish for hero section
