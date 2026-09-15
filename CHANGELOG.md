@@ -18,3 +18,4 @@
 - feat: add responsive layout improvements
 - feat: add metadata highlights for impact
 - feat: add dashboard status telemetry
+- feat: add final civic workflow polish
