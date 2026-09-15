@@ -6,3 +6,4 @@
 - feat: improve search experience
 - feat: add mission alignment badges
 - feat: add funding readiness metrics
+- feat: add volunteer coverage insight
