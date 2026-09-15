@@ -13,3 +13,4 @@
 - feat: add feature stack overview
 - feat: add issue priority filters
 - feat: add challenge bookmarking UI
+- feat: add quick access action chips
