@@ -12,3 +12,4 @@
 - feat: add civic operations snapshot
 - feat: add feature stack overview
 - feat: add issue priority filters
+- feat: add challenge bookmarking UI
