@@ -3,3 +3,4 @@
 - feat: add verified-only filter
 - feat: add high-priority triage toggles
 - feat: add claim queue indicators
+- feat: improve search experience
