@@ -19,3 +19,4 @@
 - feat: add metadata highlights for impact
 - feat: add dashboard status telemetry
 - feat: add final civic workflow polish
+- feat: reset dashboard to clean baseline
