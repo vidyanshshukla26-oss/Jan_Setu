@@ -35,3 +35,4 @@
 - feat: add workflow pipeline
 - feat: add review flow
 - feat: add cross-team view
+- feat: add insight chips
