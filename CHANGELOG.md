@@ -26,3 +26,4 @@
 - feat: add CTA actions
 - feat: add ETA metadata
 - feat: add owner labels
+- feat: add status color tokens
