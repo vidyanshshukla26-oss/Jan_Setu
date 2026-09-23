@@ -29,3 +29,4 @@
 - feat: add status color tokens
 - feat: add board layout grid
 - feat: add board responsiveness
+- feat: add quick actions
