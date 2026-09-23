@@ -37,3 +37,4 @@
 - feat: add cross-team view
 - feat: add insight chips
 - feat: add coordination layer
+- feat: add release readiness
