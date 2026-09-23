@@ -38,3 +38,4 @@
 - feat: add insight chips
 - feat: add coordination layer
 - feat: add release readiness
+- feat: add field data feed
