@@ -39,3 +39,4 @@
 - feat: add coordination layer
 - feat: add release readiness
 - feat: add field data feed
+- feat: add follow-up state
