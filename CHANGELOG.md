@@ -27,3 +27,4 @@
 - feat: add ETA metadata
 - feat: add owner labels
 - feat: add status color tokens
+- feat: add board layout grid
