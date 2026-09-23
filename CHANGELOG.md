@@ -25,3 +25,4 @@
 - feat: add progress tracking
 - feat: add CTA actions
 - feat: add ETA metadata
+- feat: add owner labels
