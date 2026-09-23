@@ -20,3 +20,4 @@
 - feat: add dashboard status telemetry
 - feat: add final civic workflow polish
 - feat: reset dashboard to clean baseline
+- feat: add action board foundation
