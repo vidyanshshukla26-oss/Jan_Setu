@@ -28,3 +28,4 @@
 - feat: add owner labels
 - feat: add status color tokens
 - feat: add board layout grid
+- feat: add board responsiveness
