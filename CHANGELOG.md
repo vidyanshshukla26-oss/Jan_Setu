@@ -23,3 +23,4 @@
 - feat: add action board foundation
 - feat: add execution cards
 - feat: add progress tracking
+- feat: add CTA actions
