@@ -30,3 +30,4 @@
 - feat: add board layout grid
 - feat: add board responsiveness
 - feat: add quick actions
+- feat: add summary panel
