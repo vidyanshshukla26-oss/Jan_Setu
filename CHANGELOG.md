@@ -22,3 +22,4 @@
 - feat: reset dashboard to clean baseline
 - feat: add action board foundation
 - feat: add execution cards
+- feat: add progress tracking
