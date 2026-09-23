@@ -24,3 +24,4 @@
 - feat: add execution cards
 - feat: add progress tracking
 - feat: add CTA actions
+- feat: add ETA metadata
