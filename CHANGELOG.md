@@ -23,6 +23,7 @@
 - feat: add action board foundation
 - feat: add execution cards
 - feat: add progress tracking
+<<<<<<< HEAD
 - feat: add CTA actions
 - feat: add ETA metadata
 - feat: add owner labels
@@ -42,3 +43,5 @@
 - feat: add follow-up state
 - feat: add final action board polish
 - feat: finalize clean multi-commit history
+=======
+>>>>>>> cbcb731 (feat: add progress tracking)
