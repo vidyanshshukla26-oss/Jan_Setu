@@ -243,7 +243,9 @@ export function App() {
       if (sortBy === 'urgency') return b.severityScore - a.severityScore;
       if (sortBy === 'solutions') return b.solutionsCount - a.solutionsCount;
       if (sortBy === 'population') return b.impactedPopulation - a.impactedPopulation;
-      if (sortBy === 'newest') return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      if (sortBy === 'newest') {
+        return new Date(b.reportedDate).getTime() - new Date(a.reportedDate).getTime();
+      }
       return 0;
     });
 
