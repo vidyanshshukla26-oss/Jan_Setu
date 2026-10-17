@@ -177,6 +177,23 @@ export function App() {
     }
   };
 
+  const handleShareChallenge = async (challenge: Challenge): Promise<string> => {
+    const shareUrl = new URL(window.location.href);
+    shareUrl.searchParams.set('challenge', challenge.id);
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: challenge.title, text: challenge.description, url: shareUrl.toString() });
+        return 'Challenge shared.';
+      }
+      await navigator.clipboard.writeText(shareUrl.toString());
+      return 'Challenge link copied to clipboard.';
+    } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') return '';
+      console.error('Challenge sharing failed:', error);
+      return 'Could not share the challenge. Please try again.';
+    }
+  };
+
   // Handle Challenge Upvoting
   const handleVoteChallenge = async (challengeId: string, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
@@ -904,6 +921,7 @@ export function App() {
         <ChallengeDetailModal
           challenge={selectedChallenge}
           onClose={() => setSelectedChallenge(null)}
+          onShare={handleShareChallenge}
           userRole={userRole}
           onVoteChallenge={(id) => handleVoteChallenge(id)}
           onOpenSubmitSolution={handleOpenSubmitSolution}

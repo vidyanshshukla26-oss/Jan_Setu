@@ -23,7 +23,8 @@ import {
   Send,
   GitBranch,
   Layers,
-  ChevronRight
+  ChevronRight,
+  Share2,
 } from 'lucide-react';
 import { Challenge, Solution, UserRole } from '../types';
 import { useDialogAccessibility } from '../hooks/useDialogAccessibility';
@@ -31,6 +32,7 @@ import { useDialogAccessibility } from '../hooks/useDialogAccessibility';
 interface ChallengeDetailModalProps {
   challenge: Challenge;
   onClose: () => void;
+  onShare: (challenge: Challenge) => Promise<string>;
   userRole: UserRole;
   onVoteChallenge: (id: string) => void;
   onOpenSubmitSolution: (challenge: Challenge) => void;
@@ -41,6 +43,7 @@ interface ChallengeDetailModalProps {
 export const ChallengeDetailModal: React.FC<ChallengeDetailModalProps> = ({
   challenge,
   onClose,
+  onShare,
   userRole,
   onVoteChallenge,
   onOpenSubmitSolution,
@@ -55,6 +58,7 @@ export const ChallengeDetailModal: React.FC<ChallengeDetailModalProps> = ({
   const [sponsorName, setSponsorName] = useState('');
   const [isSubmittingPledge, setIsSubmittingPledge] = useState(false);
   const [showPledgeForm, setShowPledgeForm] = useState(false);
+  const [shareStatus, setShareStatus] = useState('');
 
   const handlePostComment = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -188,17 +192,28 @@ export const ChallengeDetailModal: React.FC<ChallengeDetailModalProps> = ({
             </div>
           </div>
 
-          <button
-            onClick={onClose}
-            type="button"
-            aria-label="Close challenge details"
-            data-dialog-initial-focus
-            className="p-2 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200/70 transition-colors shrink-0"
-            id="close-modal-btn"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          <div className="flex shrink-0 items-center gap-2">
+            <button
+              type="button"
+              onClick={async () => setShareStatus(await onShare(challenge))}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100"
+            >
+              <Share2 className="h-4 w-4" />
+              Share
+            </button>
+            <button
+              onClick={onClose}
+              type="button"
+              aria-label="Close challenge details"
+              data-dialog-initial-focus
+              className="p-2 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200/70 transition-colors"
+              id="close-modal-btn"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
+        <p role="status" aria-live="polite" className="sr-only">{shareStatus}</p>
 
         {/* Tab Navigation */}
         <div className="flex items-center gap-1 px-4 sm:px-6 border-b border-slate-200 bg-white overflow-x-auto text-xs font-semibold">
