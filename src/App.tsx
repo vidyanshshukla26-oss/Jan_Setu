@@ -365,8 +365,10 @@ export function App() {
     ...(showHighPriority ? [{ label: 'High priority', clear: () => setShowHighPriority(false) }] : []),
     ...(hasSolutionsOnly ? [{ label: 'Has solutions', clear: () => setHasSolutionsOnly(false) }] : []),
   ];
-  const availableCities = [...new Set(challenges.map((challenge) => challenge.location.city))].sort((a, b) => a.localeCompare(b));
-  const availableSdgs = [...new Set(challenges.map((challenge) => challenge.sdgNumber))].sort((a, b) => a - b);
+  const availableCities = Array.from(new Set<string>(challenges.map((challenge) => challenge.location.city)))
+    .sort((a, b) => a.localeCompare(b));
+  const availableSdgs = Array.from(new Set<number>(challenges.map((challenge) => challenge.sdgNumber)))
+    .sort((a, b) => a - b);
 
   const quickInsights = [
     { label: 'Verified Challenges', value: `${challenges.filter((c) => c.verifiedByOfficial).length}`, icon: ShieldCheck, tone: 'bg-emerald-50 text-emerald-700' },

@@ -41,7 +41,7 @@ export const GeoSpatialMap: React.FC<GeoSpatialMapProps> = ({
     );
   }, [filtered]);
 
-  const availableCategories = [...new Set(challenges.map((challenge) => challenge.category))]
+  const availableCategories = Array.from(new Set<string>(challenges.map((challenge) => challenge.category)))
     .sort((a, b) => a.localeCompare(b));
   const countryCount = new Set(filtered.map((challenge) => challenge.location.country)).size;
 
@@ -236,7 +236,7 @@ export const GeoSpatialMap: React.FC<GeoSpatialMapProps> = ({
                     } transition-all duration-200`}
                   >
                     <span>{ch.sdgNumber}</span>
-                  </button>
+                  </div>
 
                   {/* Mini Hover Tooltip */}
                   <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block whitespace-nowrap z-30 pointer-events-none">
@@ -247,7 +247,7 @@ export const GeoSpatialMap: React.FC<GeoSpatialMapProps> = ({
                       <p className="text-[10px] text-slate-300 max-w-[200px] truncate">{ch.title}</p>
                     </div>
                   </div>
-                </div>
+                </button>
               );
             })}
           </div>

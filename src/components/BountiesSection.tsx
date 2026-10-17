@@ -36,7 +36,7 @@ export const BountiesSection: React.FC<BountiesSectionProps> = ({
       if (sortBy === 'solutions') return b.solutionsCount - a.solutionsCount;
       return b.bountyAmount - a.bountyAmount;
     });
-  const sponsorOptions = [...new Set(fundedChallenges.flatMap((challenge) => challenge.sponsors.map((sponsor) => sponsor.name)))]
+  const sponsorOptions = Array.from(new Set<string>(fundedChallenges.flatMap((challenge) => challenge.sponsors.map((sponsor) => sponsor.name))))
     .sort((a, b) => a.localeCompare(b));
   const totalGrantPool = challenges.reduce((acc, c) => acc + c.bountyAmount, 0);
 
@@ -175,11 +175,6 @@ export const BountiesSection: React.FC<BountiesSectionProps> = ({
                       </span>
                     ))}
                   </div>
-                  {visibleChallenges.length === 0 && (
-                    <p className="rounded-xl border border-dashed border-gray-300 bg-white p-8 text-center text-sm text-gray-600">
-                      No funded challenges are associated with this sponsor yet.
-                    </p>
-                  )}
                 </div>
               </div>
 
@@ -203,6 +198,11 @@ export const BountiesSection: React.FC<BountiesSectionProps> = ({
             </article>
           ))}
         </div>
+        {visibleChallenges.length === 0 && (
+          <p className="rounded-xl border border-dashed border-gray-300 bg-white p-8 text-center text-sm text-gray-600">
+            No funded challenges are associated with this sponsor yet.
+          </p>
+        )}
       </div>
 
       {/* Milestone Escrow Architecture Explainer */}
