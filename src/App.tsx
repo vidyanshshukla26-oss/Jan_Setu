@@ -57,6 +57,19 @@ const CATEGORIES: ChallengeCategory[] = [
   'Waste Management & Circular Economy',
 ];
 
+const SAVED_CHALLENGES_KEY = 'jansetu-saved-challenges';
+
+function readSavedChallenges(): Record<string, boolean> {
+  try {
+    const savedIds: unknown = JSON.parse(localStorage.getItem(SAVED_CHALLENGES_KEY) || '[]');
+    if (!Array.isArray(savedIds)) return {};
+    return Object.fromEntries(savedIds.filter((id): id is string => typeof id === 'string').map((id) => [id, true]));
+  } catch (error) {
+    console.warn('Could not restore saved challenges:', error);
+    return {};
+  }
+}
+
 export function App() {
   const [challenges, setChallenges] = useState<Challenge[]>([]);
   const [analytics, setAnalytics] = useState<AnalyticsSummary | null>(null);
@@ -76,7 +89,7 @@ export function App() {
   const [favoritesOnly, setFavoritesOnly] = useState<boolean>(false);
   const [verifiedOnly, setVerifiedOnly] = useState<boolean>(false);
   const [showHighPriority, setShowHighPriority] = useState<boolean>(false);
-  const [savedChallenges, setSavedChallenges] = useState<Record<string, boolean>>({});
+  const [savedChallenges, setSavedChallenges] = useState<Record<string, boolean>>(readSavedChallenges);
 
   // Modal States
   const [selectedChallenge, setSelectedChallenge] = useState<Challenge | null>(null);
@@ -123,6 +136,13 @@ export function App() {
     document.documentElement.classList.toggle('larger-text', largerText);
     localStorage.setItem('jansetu-larger-text', String(largerText));
   }, [largerText]);
+
+  useEffect(() => {
+    localStorage.setItem(
+      SAVED_CHALLENGES_KEY,
+      JSON.stringify(Object.keys(savedChallenges).filter((id) => savedChallenges[id])),
+    );
+  }, [savedChallenges]);
 
   const handleShareUpdate = async () => {
     const update = {
