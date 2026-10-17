@@ -654,6 +654,11 @@ export function App() {
                     setSelectedCategory('All');
                     setSelectedSeverity('All');
                     setSelectedStatus('All');
+                    setMinimumBounty('');
+                    setFavoritesOnly(false);
+                    setVerifiedOnly(false);
+                    setShowHighPriority(false);
+                    setSortBy('upvotes');
                   }}
                   className="px-4 py-2 bg-gray-900 text-white text-xs font-semibold rounded-lg hover:bg-black"
                 >
