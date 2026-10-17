@@ -35,6 +35,8 @@ export const GeoSpatialMap: React.FC<GeoSpatialMapProps> = ({
     return true;
   });
 
+  const availableCategories = [...new Set(challenges.map((challenge) => challenge.category))]
+    .sort((a, b) => a.localeCompare(b));
   const countryCount = new Set(filtered.map((challenge) => challenge.location.country)).size;
 
   const getMapPosition = (lat: number, lng: number) => {
@@ -91,12 +93,7 @@ export const GeoSpatialMap: React.FC<GeoSpatialMapProps> = ({
             className="px-2.5 py-1 bg-slate-50 border border-slate-300 rounded-lg text-xs font-medium"
           >
             <option value="All">All Categories</option>
-            <option value="Water & Sanitation">Water & Sanitation</option>
-            <option value="Agriculture & Agritech">Agriculture & Agritech</option>
-            <option value="Rural Healthcare">Rural Healthcare</option>
-            <option value="Disaster Management">Disaster Management</option>
-            <option value="Women Safety & Inclusion">Women Safety & Inclusion</option>
-            <option value="Waste Management & Circular Economy">Waste & Circular Economy</option>
+            {availableCategories.map((category) => <option key={category} value={category}>{category}</option>)}
           </select>
 
           <select
@@ -108,6 +105,7 @@ export const GeoSpatialMap: React.FC<GeoSpatialMapProps> = ({
             <option value="Critical">Critical (Threat to Life)</option>
             <option value="High">High Urgency</option>
             <option value="Medium">Medium</option>
+            <option value="Low">Low</option>
           </select>
 
           <div className="flex items-center bg-slate-100 p-0.5 rounded-lg">
