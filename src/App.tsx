@@ -99,6 +99,7 @@ export function App() {
   const [favoritesOnly, setFavoritesOnly] = useState<boolean>(false);
   const [verifiedOnly, setVerifiedOnly] = useState<boolean>(false);
   const [showHighPriority, setShowHighPriority] = useState<boolean>(false);
+  const [hasSolutionsOnly, setHasSolutionsOnly] = useState<boolean>(false);
   const [savedChallenges, setSavedChallenges] = useState<Record<string, boolean>>(readSavedChallenges);
 
   // Modal States
@@ -219,6 +220,7 @@ export function App() {
       if (favoritesOnly && !savedChallenges[c.id]) return false;
       if (verifiedOnly && !c.verifiedByOfficial) return false;
       if (showHighPriority && c.severity !== 'Critical' && c.severity !== 'High') return false;
+      if (hasSolutionsOnly && c.solutionsCount === 0) return false;
       if (searchQuery.trim()) {
         const searchableFields = [
           c.title,
@@ -282,6 +284,7 @@ export function App() {
     ...(favoritesOnly ? [{ label: 'Saved only', clear: () => setFavoritesOnly(false) }] : []),
     ...(verifiedOnly ? [{ label: 'Verified only', clear: () => setVerifiedOnly(false) }] : []),
     ...(showHighPriority ? [{ label: 'High priority', clear: () => setShowHighPriority(false) }] : []),
+    ...(hasSolutionsOnly ? [{ label: 'Has solutions', clear: () => setHasSolutionsOnly(false) }] : []),
   ];
 
   const quickInsights = [
@@ -355,6 +358,7 @@ export function App() {
                     setFavoritesOnly(false);
                     setVerifiedOnly(false);
                     setShowHighPriority(false);
+                    setHasSolutionsOnly(false);
                   }}
                   aria-label="Reset all challenge filters and sorting"
                   className="px-3.5 py-1.5 bg-white border border-gray-200 rounded-lg text-xs font-semibold text-gray-700 hover:bg-gray-50 shadow-2xs transition-all cursor-pointer"
@@ -537,6 +541,15 @@ export function App() {
                   <Target className="w-3.5 h-3.5" />
                   High priority
                 </button>
+                <button
+                  type="button"
+                  onClick={() => setHasSolutionsOnly((value) => !value)}
+                  aria-pressed={hasSolutionsOnly}
+                  className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-semibold ${hasSolutionsOnly ? 'bg-indigo-100 text-indigo-700 border border-indigo-200' : 'bg-gray-100 text-gray-700 border border-gray-200'} transition-colors`}
+                >
+                  <Lightbulb className="w-3.5 h-3.5" />
+                  With solutions
+                </button>
                 <div aria-live="polite" className="ml-auto inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-gray-50 px-2.5 py-1.5 text-[11px] font-semibold text-gray-700">
                   <Star className="w-3.5 h-3.5 text-amber-500" />
                   {savedChallengeCount} saved
@@ -684,6 +697,7 @@ export function App() {
                     setFavoritesOnly(false);
                     setVerifiedOnly(false);
                     setShowHighPriority(false);
+                    setHasSolutionsOnly(false);
                     setSortBy('upvotes');
                   }}
                   className="px-4 py-2 bg-gray-900 text-white text-xs font-semibold rounded-lg hover:bg-black"
