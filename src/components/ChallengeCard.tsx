@@ -17,12 +17,14 @@ import { Challenge } from '../types';
 
 interface ChallengeCardProps {
   challenge: Challenge;
+  isVoting?: boolean;
   onSelect: (challenge: Challenge) => void;
   onVote: (challengeId: string, e: React.MouseEvent) => void;
 }
 
 export const ChallengeCard: React.FC<ChallengeCardProps> = ({
   challenge,
+  isVoting = false,
   onSelect,
   onVote,
 }) => {
@@ -193,10 +195,11 @@ export const ChallengeCard: React.FC<ChallengeCardProps> = ({
           <div className="flex items-center gap-2">
             <button
               type="button"
+              disabled={isVoting}
               onClick={(e) => onVote(challenge.id, e)}
               aria-label={`${challenge.hasUpvoted ? 'Remove vote from' : 'Upvote'} ${challenge.title}`}
               aria-pressed={Boolean(challenge.hasUpvoted)}
-              className={`flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold transition-colors ${
+              className={`flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold transition-colors disabled:cursor-wait disabled:opacity-60 ${
                 challenge.hasUpvoted
                   ? 'bg-blue-100 text-blue-800 border border-blue-300'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'

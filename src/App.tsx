@@ -111,6 +111,7 @@ export function App() {
   const [showHighPriority, setShowHighPriority] = useState<boolean>(false);
   const [hasSolutionsOnly, setHasSolutionsOnly] = useState<boolean>(false);
   const [savedChallenges, setSavedChallenges] = useState<Record<string, boolean>>(readSavedChallenges);
+  const [votingChallenges, setVotingChallenges] = useState<Record<string, boolean>>({});
 
   // Modal States
   const [selectedChallenge, setSelectedChallenge] = useState<Challenge | null>(null);
@@ -221,8 +222,11 @@ export function App() {
   // Handle Challenge Upvoting
   const handleVoteChallenge = async (challengeId: string, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
+    if (votingChallenges[challengeId]) return;
+    setVotingChallenges((previous) => ({ ...previous, [challengeId]: true }));
     try {
       const res = await fetch(`/api/challenges/${challengeId}/vote`, { method: 'POST' });
+      if (!res.ok) throw new Error(`Vote request failed with status ${res.status}`);
       const data = await res.json();
       if (data.success && typeof data.upvotes === 'number') {
         setChallenges((prev) =>
@@ -250,6 +254,8 @@ export function App() {
       }
     } catch (err) {
       console.error('Vote error:', err);
+    } finally {
+      setVotingChallenges((previous) => ({ ...previous, [challengeId]: false }));
     }
   };
 
@@ -839,6 +845,7 @@ export function App() {
                     </button>
                     <ChallengeCard
                       challenge={challenge}
+                      isVoting={Boolean(votingChallenges[challenge.id])}
                       onSelect={(ch) => setSelectedChallenge(ch)}
                       onVote={handleVoteChallenge}
                     />
