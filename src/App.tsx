@@ -583,6 +583,15 @@ export function App() {
                 <div aria-live="polite" className="ml-auto inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-gray-50 px-2.5 py-1.5 text-[11px] font-semibold text-gray-700">
                   <Star className="w-3.5 h-3.5 text-amber-500" />
                   {savedChallengeCount} saved
+                  {savedChallengeCount > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => setSavedChallenges({})}
+                      className="ml-1 text-blue-700 underline decoration-blue-300 underline-offset-2 hover:text-blue-900"
+                    >
+                      Clear list
+                    </button>
+                  )}
                 </div>
               </div>
 
