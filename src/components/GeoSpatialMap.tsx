@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   MapPin,
   Layers,
@@ -34,6 +34,12 @@ export const GeoSpatialMap: React.FC<GeoSpatialMapProps> = ({
     if (selectedSeverity !== 'All' && c.severity !== selectedSeverity) return false;
     return true;
   });
+
+  useEffect(() => {
+    setActivePin((current) =>
+      filtered.find((challenge) => challenge.id === current?.id) ?? filtered[0] ?? null,
+    );
+  }, [filtered]);
 
   const availableCategories = [...new Set(challenges.map((challenge) => challenge.category))]
     .sort((a, b) => a.localeCompare(b));
