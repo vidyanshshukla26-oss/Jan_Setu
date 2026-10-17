@@ -30,6 +30,7 @@ import {
   Route,
   Gauge,
   HandCoins,
+  Type,
 } from 'lucide-react';
 import { Challenge, Solution, UserRole, AnalyticsSummary, ChallengeCategory, AppTab } from './types';
 import { Navbar } from './components/Navbar';
@@ -61,6 +62,10 @@ export function App() {
   const [analytics, setAnalytics] = useState<AnalyticsSummary | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [shareStatus, setShareStatus] = useState<string>('');
+  const [largerText, setLargerText] = useState<boolean>(
+    () => localStorage.getItem('jansetu-larger-text') === 'true',
+  );
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [selectedSeverity, setSelectedSeverity] = useState<string>('All');
@@ -113,6 +118,31 @@ export function App() {
   useEffect(() => {
     fetchData();
   }, []);
+
+  useEffect(() => {
+    document.documentElement.classList.toggle('larger-text', largerText);
+    localStorage.setItem('jansetu-larger-text', String(largerText));
+  }, [largerText]);
+
+  const handleShareUpdate = async () => {
+    const update = {
+      title: 'Jan Setu civic operations update',
+      text: `${highPriorityCount} high-priority civic challenges need attention.`,
+    };
+    try {
+      if (navigator.share) {
+        await navigator.share(update);
+        setShareStatus('Update shared.');
+      } else {
+        await navigator.clipboard.writeText(`${update.title}\n${update.text}`);
+        setShareStatus('Update copied to clipboard.');
+      }
+    } catch (err) {
+      if (err instanceof DOMException && err.name === 'AbortError') return;
+      console.error('Share update error:', err);
+      setShareStatus('Could not share the update. Please try again.');
+    }
+  };
 
   // Handle Challenge Upvoting
   const handleVoteChallenge = async (challengeId: string, e?: React.MouseEvent) => {
@@ -225,6 +255,12 @@ export function App() {
 
   return (
     <div className="min-h-screen bg-[#F3F4F6] text-[#111827] flex flex-col font-sans">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-white focus:px-4 focus:py-2 focus:font-semibold focus:text-blue-700 focus:shadow-lg"
+      >
+        Skip to main content
+      </a>
       {/* Platform Navigation */}
       <Navbar
         userRole={userRole}
@@ -239,7 +275,7 @@ export function App() {
       />
 
       {/* Main App Container */}
-      <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 space-y-5">
+      <main id="main-content" tabIndex={-1} className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 space-y-5">
         {/* TAB 1: EXPLORE CHALLENGES VIEW */}
         {currentTab === 'challenges' && (
           <div className="space-y-4">
@@ -260,11 +296,13 @@ export function App() {
                     setSelectedCategory('All');
                     setSelectedSeverity('All');
                     setSelectedStatus('All');
+                    setSortBy('upvotes');
                     setSearchQuery('');
                     setFavoritesOnly(false);
                     setVerifiedOnly(false);
                     setShowHighPriority(false);
                   }}
+                  aria-label="Reset all challenge filters and sorting"
                   className="px-3.5 py-1.5 bg-white border border-gray-200 rounded-lg text-xs font-semibold text-gray-700 hover:bg-gray-50 shadow-2xs transition-all cursor-pointer"
                 >
                   Reset Filter
@@ -309,14 +347,27 @@ export function App() {
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  <button className="px-3 py-1.5 bg-white text-blue-700 rounded-lg text-xs font-semibold hover:bg-blue-50 transition-colors">
+                  <button type="button" onClick={handleShareUpdate} className="px-3 py-1.5 bg-white text-blue-700 rounded-lg text-xs font-semibold hover:bg-blue-50 transition-colors">
                     Share update
                   </button>
-                  <button className="px-3 py-1.5 border border-white/30 bg-transparent text-white rounded-lg text-xs font-semibold hover:bg-white/10 transition-colors">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedCategory('All');
+                      setSelectedSeverity('All');
+                      setSelectedStatus('All');
+                      setSearchQuery('');
+                      setFavoritesOnly(false);
+                      setVerifiedOnly(false);
+                      setShowHighPriority(true);
+                    }}
+                    className="px-3 py-1.5 border border-white/30 bg-transparent text-white rounded-lg text-xs font-semibold hover:bg-white/10 transition-colors"
+                  >
                     View field plan
                   </button>
                 </div>
               </div>
+              <p role="status" aria-live="polite" className="sr-only">{shareStatus}</p>
             </div>
 
             {/* Filter & Search Matrix */}
@@ -327,6 +378,7 @@ export function App() {
                   <Search className="w-3.5 h-3.5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
                   <input
                     type="text"
+                    aria-label="Search challenges by keywords, city, state, or technology"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search by keywords, city, state, or tech..."
@@ -337,6 +389,7 @@ export function App() {
                 <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-end">
                   {/* Severity Filter */}
                   <select
+                    aria-label="Filter challenges by severity"
                     value={selectedSeverity}
                     onChange={(e) => setSelectedSeverity(e.target.value)}
                     className="px-2.5 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-xs font-semibold text-gray-700 cursor-pointer"
@@ -349,6 +402,7 @@ export function App() {
                   </select>
 
                   <select
+                    aria-label="Filter challenges by status"
                     value={selectedStatus}
                     onChange={(e) => setSelectedStatus(e.target.value)}
                     className="px-2.5 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-xs font-semibold text-gray-700 cursor-pointer"
@@ -364,8 +418,9 @@ export function App() {
                   <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-1.5">
                     <ArrowUpDown className="w-3 h-3 text-gray-400" />
                     <select
+                      aria-label="Sort challenges"
                       value={sortBy}
-                      onChange={(e) => setSortBy(e.target.value as any)}
+                      onChange={(e) => setSortBy(e.target.value as 'upvotes' | 'bounty' | 'urgency' | 'newest')}
                       className="bg-transparent text-xs font-semibold text-gray-700 focus:outline-hidden cursor-pointer"
                     >
                       <option value="upvotes">Most Citizen Votes</option>
@@ -380,6 +435,7 @@ export function App() {
               <div className="flex flex-wrap items-center gap-2">
                 <button
                   onClick={() => setFavoritesOnly((value) => !value)}
+                  aria-pressed={favoritesOnly}
                   className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-semibold ${favoritesOnly ? 'bg-blue-100 text-blue-700 border border-blue-200' : 'bg-gray-100 text-gray-700 border border-gray-200'} transition-colors`}
                 >
                   <Bookmark className="w-3.5 h-3.5" />
@@ -387,6 +443,7 @@ export function App() {
                 </button>
                 <button
                   onClick={() => setVerifiedOnly((value) => !value)}
+                  aria-pressed={verifiedOnly}
                   className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-semibold ${verifiedOnly ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' : 'bg-gray-100 text-gray-700 border border-gray-200'} transition-colors`}
                 >
                   <CheckCircle2 className="w-3.5 h-3.5" />
@@ -394,21 +451,23 @@ export function App() {
                 </button>
                 <button
                   onClick={() => setShowHighPriority((value) => !value)}
+                  aria-pressed={showHighPriority}
                   className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-semibold ${showHighPriority ? 'bg-rose-100 text-rose-700 border border-rose-200' : 'bg-gray-100 text-gray-700 border border-gray-200'} transition-colors`}
                 >
                   <Target className="w-3.5 h-3.5" />
                   High priority
                 </button>
-                <div className="ml-auto inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-gray-50 px-2.5 py-1.5 text-[11px] font-semibold text-gray-700">
+                <div aria-live="polite" className="ml-auto inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-gray-50 px-2.5 py-1.5 text-[11px] font-semibold text-gray-700">
                   <Star className="w-3.5 h-3.5 text-amber-500" />
                   {savedChallengeCount} saved
                 </div>
               </div>
 
               {/* Category Filter Chips */}
-              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
+              <div role="group" aria-label="Filter challenges by category" className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
                 <button
                   onClick={() => setSelectedCategory('All')}
+                  aria-pressed={selectedCategory === 'All'}
                   className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold whitespace-nowrap transition-colors ${
                     selectedCategory === 'All'
                       ? 'bg-blue-600 text-white'
@@ -423,6 +482,7 @@ export function App() {
                     <button
                       key={cat}
                       onClick={() => setSelectedCategory(cat)}
+                      aria-pressed={selectedCategory === cat}
                       className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold whitespace-nowrap transition-colors ${
                         selectedCategory === cat
                           ? 'bg-blue-600 text-white'
@@ -489,13 +549,16 @@ export function App() {
             </div>
 
             {/* Challenge Cards Grid */}
+            <p role="status" aria-live="polite" className="sr-only">
+              {loading ? 'Loading challenges.' : loadError ? loadError : `${filteredChallenges.length} challenges found.`}
+            </p>
             {loading ? (
-              <div className="py-16 text-center text-gray-500 space-y-2">
+              <div role="status" aria-live="polite" className="py-16 text-center text-gray-500 space-y-2">
                 <RefreshCw className="w-8 h-8 mx-auto animate-spin text-blue-600" />
                 <p className="text-xs font-semibold">Loading societal challenges database...</p>
               </div>
             ) : loadError ? (
-              <div className="py-16 text-center bg-white rounded-xl border border-red-200 p-8 space-y-3">
+              <div role="alert" className="py-16 text-center bg-white rounded-xl border border-red-200 p-8 space-y-3">
                 <AlertTriangle className="w-10 h-10 text-red-500 mx-auto" />
                 <h3 className="text-base font-bold text-gray-800">Could not load live challenges</h3>
                 <p className="text-xs text-gray-500">{loadError}</p>
@@ -504,7 +567,7 @@ export function App() {
                 </button>
               </div>
             ) : filteredChallenges.length === 0 ? (
-              <div className="py-16 text-center bg-white rounded-xl border border-dashed border-gray-300 p-8 space-y-3">
+              <div role="status" className="py-16 text-center bg-white rounded-xl border border-dashed border-gray-300 p-8 space-y-3">
                 <AlertTriangle className="w-10 h-10 text-amber-500 mx-auto" />
                 <h3 className="text-base font-bold text-gray-800">No challenges matched your filter</h3>
                 <p className="text-xs text-gray-500 max-w-md mx-auto">
@@ -523,7 +586,7 @@ export function App() {
                 </button>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div aria-label={`${filteredChallenges.length} challenges`} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {filteredChallenges.map((challenge) => (
                   <div key={challenge.id} className="relative">
                     <button
@@ -531,7 +594,8 @@ export function App() {
                         event.stopPropagation();
                         toggleSaveChallenge(challenge.id);
                       }}
-                      aria-label={savedChallenges[challenge.id] ? 'Remove from saved list' : 'Save challenge'}
+                      aria-label={`${savedChallenges[challenge.id] ? 'Remove from saved list' : 'Save'}: ${challenge.title}`}
+                      aria-pressed={Boolean(savedChallenges[challenge.id])}
                       className={`absolute right-3 top-3 z-10 inline-flex items-center justify-center w-8 h-8 rounded-full border shadow-sm transition-all ${savedChallenges[challenge.id] ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'}`}
                     >
                       <Bookmark className={`w-3.5 h-3.5 ${savedChallenges[challenge.id] ? 'fill-current' : ''}`} />
@@ -649,9 +713,18 @@ export function App() {
       </main>
 
       {/* High Density Footer */}
-      <footer className="h-8 bg-white border-t border-gray-200 px-4 sm:px-6 flex items-center justify-between shrink-0 text-[10px] font-medium text-gray-400">
+      <footer className="min-h-10 bg-white border-t border-gray-200 px-4 sm:px-6 flex flex-wrap items-center justify-between gap-2 py-1.5 shrink-0 text-[10px] font-medium text-gray-500">
         <div>System: Production-Alpha-v23 • Region: Asia-South-1</div>
-        <div className="flex gap-4">
+        <div className="flex flex-wrap items-center gap-4">
+          <button
+            type="button"
+            onClick={() => setLargerText((enabled) => !enabled)}
+            aria-pressed={largerText}
+            className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-gray-700 hover:bg-gray-100"
+          >
+            <Type className="h-3.5 w-3.5" />
+            {largerText ? 'Standard text' : 'Larger text'}
+          </button>
           <span className="flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
             Blockchain Synced

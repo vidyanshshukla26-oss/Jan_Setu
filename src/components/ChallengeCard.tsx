@@ -61,7 +61,7 @@ export const ChallengeCard: React.FC<ChallengeCardProps> = ({
   const shortId = challenge.id.replace(/[^a-zA-Z0-9]/g, '').slice(-3).toUpperCase() || '882';
 
   return (
-    <div
+    <article
       onClick={() => onSelect(challenge)}
       className="bg-white border border-gray-200 rounded-xl p-4 flex flex-col justify-between shadow-xs hover:shadow-md hover:border-blue-400 transition-all duration-200 cursor-pointer group"
       id={`challenge-card-${challenge.id}`}
@@ -88,7 +88,13 @@ export const ChallengeCard: React.FC<ChallengeCardProps> = ({
 
         {/* Title */}
         <h3 className="font-bold text-gray-900 text-base mb-1.5 leading-tight group-hover:text-blue-600 transition-colors line-clamp-2">
-          {challenge.title}
+          <button
+            type="button"
+            aria-label={`View challenge details: ${challenge.title}`}
+            className="text-left"
+          >
+            {challenge.title}
+          </button>
         </h3>
 
         {/* Location & Population tag */}
@@ -133,7 +139,14 @@ export const ChallengeCard: React.FC<ChallengeCardProps> = ({
             <span className="text-gray-400">Solution Maturity</span>
             <span className="font-bold text-gray-800">{progressPercent}%</span>
           </div>
-          <div className="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden">
+          <div
+            role="progressbar"
+            aria-label="Solution maturity"
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={progressPercent}
+            className="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden"
+          >
             <div
               className={`h-1.5 rounded-full ${getProgressColor(challenge.severity)} transition-all duration-300`}
               style={{ width: `${progressPercent}%` }}
@@ -162,8 +175,10 @@ export const ChallengeCard: React.FC<ChallengeCardProps> = ({
 
           <div className="flex items-center gap-2">
             <button
+              type="button"
               onClick={(e) => onVote(challenge.id, e)}
               aria-label={`${challenge.hasUpvoted ? 'Remove vote from' : 'Upvote'} ${challenge.title}`}
+              aria-pressed={Boolean(challenge.hasUpvoted)}
               className={`flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold transition-colors ${
                 challenge.hasUpvoted
                   ? 'bg-blue-100 text-blue-800 border border-blue-300'
@@ -181,6 +196,6 @@ export const ChallengeCard: React.FC<ChallengeCardProps> = ({
           </div>
         </div>
       </div>
-    </div>
+    </article>
   );
 };

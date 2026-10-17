@@ -87,6 +87,8 @@ export const Navbar: React.FC<NavbarProps> = ({
           </span>
           <button
             onClick={onOpenAIChat}
+            type="button"
+            aria-label="Open JanSetu AI Civic Copilot"
             className="flex items-center gap-1.5 text-blue-300 hover:text-blue-200 transition-colors font-semibold"
             id="nav-jansetu-ai-btn"
           >
@@ -103,6 +105,8 @@ export const Navbar: React.FC<NavbarProps> = ({
           <div className="flex items-center gap-3 shrink-0">
             <button
               onClick={() => setCurrentTab('challenges')}
+              type="button"
+              aria-label="Jan Setu home"
               className="flex items-center gap-2.5 text-left group cursor-pointer"
               id="nav-logo-btn"
             >
@@ -123,9 +127,11 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
 
           {/* Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-1">
+          <nav aria-label="Main navigation" className="hidden lg:flex items-center gap-1">
             <button
               onClick={() => setCurrentTab('challenges')}
+              type="button"
+              aria-current={currentTab === 'challenges' ? 'page' : undefined}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
                 currentTab === 'challenges'
                   ? 'bg-blue-50 text-blue-700'
@@ -138,6 +144,8 @@ export const Navbar: React.FC<NavbarProps> = ({
 
             <button
               onClick={() => setCurrentTab('map')}
+              type="button"
+              aria-current={currentTab === 'map' ? 'page' : undefined}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5 ${
                 currentTab === 'map'
                   ? 'bg-blue-50 text-blue-700'
@@ -151,6 +159,8 @@ export const Navbar: React.FC<NavbarProps> = ({
 
             <button
               onClick={() => setCurrentTab('bounties')}
+              type="button"
+              aria-current={currentTab === 'bounties' ? 'page' : undefined}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5 ${
                 currentTab === 'bounties'
                   ? 'bg-blue-50 text-blue-700'
@@ -164,6 +174,8 @@ export const Navbar: React.FC<NavbarProps> = ({
 
             <button
               onClick={() => setCurrentTab('proposal-studio')}
+              type="button"
+              aria-current={currentTab === 'proposal-studio' ? 'page' : undefined}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5 ${
                 currentTab === 'proposal-studio'
                   ? 'bg-blue-50 text-blue-700'
@@ -177,6 +189,8 @@ export const Navbar: React.FC<NavbarProps> = ({
 
             <button
               onClick={() => setCurrentTab('analytics')}
+              type="button"
+              aria-current={currentTab === 'analytics' ? 'page' : undefined}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5 ${
                 currentTab === 'analytics'
                   ? 'bg-blue-50 text-blue-700'
@@ -190,6 +204,8 @@ export const Navbar: React.FC<NavbarProps> = ({
 
             <button
               onClick={() => setCurrentTab('leaderboard')}
+              type="button"
+              aria-current={currentTab === 'leaderboard' ? 'page' : undefined}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5 ${
                 currentTab === 'leaderboard'
                   ? 'bg-blue-50 text-blue-700'
@@ -209,6 +225,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
+                aria-label="Search challenges"
                 placeholder="Search database..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -220,6 +237,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             {/* Role Switcher Dropdown */}
             <div className="relative">
               <select
+                aria-label="Choose your platform role"
                 value={userRole}
                 onChange={(e) => setUserRole(e.target.value as UserRole)}
                 className="appearance-none pl-2.5 pr-7 py-1.5 text-xs font-semibold rounded-lg border border-gray-200 bg-white text-gray-800 cursor-pointer hover:border-gray-300 focus:outline-hidden focus:ring-1 focus:ring-blue-600"
@@ -238,6 +256,8 @@ export const Navbar: React.FC<NavbarProps> = ({
             {/* Report Problem Button */}
             <button
               onClick={onOpenSubmitChallenge}
+              type="button"
+              aria-label="Submit a new challenge"
               className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white rounded-lg text-xs font-semibold shadow-sm transition-all cursor-pointer"
               id="nav-report-problem-btn"
             >
@@ -259,9 +279,11 @@ export const Navbar: React.FC<NavbarProps> = ({
       </div>
 
       {/* Mobile Tab Bar */}
-      <div className="lg:hidden flex items-center justify-around border-t border-gray-200 bg-white px-2 py-1.5 overflow-x-auto text-xs">
+      <nav aria-label="Mobile navigation" className="lg:hidden flex items-center justify-around border-t border-gray-200 bg-white px-2 py-1.5 overflow-x-auto text-xs">
         <button
           onClick={() => setCurrentTab('challenges')}
+          type="button"
+          aria-current={currentTab === 'challenges' ? 'page' : undefined}
           className={`px-2.5 py-1 rounded-md font-semibold whitespace-nowrap text-xs ${
             currentTab === 'challenges' ? 'bg-blue-50 text-blue-700' : 'text-gray-600'
           }`}
@@ -270,6 +292,8 @@ export const Navbar: React.FC<NavbarProps> = ({
         </button>
         <button
           onClick={() => setCurrentTab('map')}
+          type="button"
+          aria-current={currentTab === 'map' ? 'page' : undefined}
           className={`px-2.5 py-1 rounded-md font-semibold whitespace-nowrap text-xs ${
             currentTab === 'map' ? 'bg-blue-50 text-blue-700' : 'text-gray-600'
           }`}
@@ -278,6 +302,8 @@ export const Navbar: React.FC<NavbarProps> = ({
         </button>
         <button
           onClick={() => setCurrentTab('bounties')}
+          type="button"
+          aria-current={currentTab === 'bounties' ? 'page' : undefined}
           className={`px-2.5 py-1 rounded-md font-semibold whitespace-nowrap text-xs ${
             currentTab === 'bounties' ? 'bg-blue-50 text-blue-700' : 'text-gray-600'
           }`}
@@ -286,6 +312,8 @@ export const Navbar: React.FC<NavbarProps> = ({
         </button>
         <button
           onClick={() => setCurrentTab('proposal-studio')}
+          type="button"
+          aria-current={currentTab === 'proposal-studio' ? 'page' : undefined}
           className={`px-2.5 py-1 rounded-md font-semibold whitespace-nowrap text-xs ${
             currentTab === 'proposal-studio' ? 'bg-blue-50 text-blue-700' : 'text-gray-600'
           }`}
@@ -294,6 +322,8 @@ export const Navbar: React.FC<NavbarProps> = ({
         </button>
         <button
           onClick={() => setCurrentTab('analytics')}
+          type="button"
+          aria-current={currentTab === 'analytics' ? 'page' : undefined}
           className={`px-2.5 py-1 rounded-md font-semibold whitespace-nowrap text-xs ${
             currentTab === 'analytics' ? 'bg-blue-50 text-blue-700' : 'text-gray-600'
           }`}
@@ -302,14 +332,15 @@ export const Navbar: React.FC<NavbarProps> = ({
         </button>
         <button
           onClick={() => setCurrentTab('leaderboard')}
+          type="button"
+          aria-current={currentTab === 'leaderboard' ? 'page' : undefined}
           className={`px-2.5 py-1 rounded-md font-semibold whitespace-nowrap text-xs ${
             currentTab === 'leaderboard' ? 'bg-blue-50 text-blue-700' : 'text-gray-600'
           }`}
         >
           Rankings
         </button>
-      </div>
+      </nav>
     </header>
   );
 };
-

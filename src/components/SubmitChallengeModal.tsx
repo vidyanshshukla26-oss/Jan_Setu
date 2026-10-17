@@ -15,6 +15,7 @@ import {
   HelpCircle
 } from 'lucide-react';
 import { ChallengeCategory, SeverityLevel, UserRole } from '../types';
+import { useDialogAccessibility } from '../hooks/useDialogAccessibility';
 
 interface SubmitChallengeModalProps {
   onClose: () => void;
@@ -48,6 +49,7 @@ export const SubmitChallengeModal: React.FC<SubmitChallengeModalProps> = ({
   onSuccess,
   userRole,
 }) => {
+  const dialogRef = useDialogAccessibility(onClose);
   const [step, setStep] = useState<1 | 2>(1);
   const [rawCitizenNotes, setRawCitizenNotes] = useState('');
   const [selectedLanguage, setSelectedLanguage] = useState('Hindi / Vernacular');
@@ -255,6 +257,11 @@ export const SubmitChallengeModal: React.FC<SubmitChallengeModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
       <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="submit-challenge-title"
+        tabIndex={-1}
         className="bg-white rounded-2xl border border-slate-200 w-full max-w-3xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200"
         id="submit-challenge-modal"
       >
@@ -265,7 +272,7 @@ export const SubmitChallengeModal: React.FC<SubmitChallengeModalProps> = ({
               <Sparkles className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-slate-900">
+              <h2 id="submit-challenge-title" className="text-lg font-bold text-slate-900">
                 Report a Societal Challenge (SIH26043)
               </h2>
               <p className="text-xs text-slate-500">
@@ -276,6 +283,9 @@ export const SubmitChallengeModal: React.FC<SubmitChallengeModalProps> = ({
 
           <button
             onClick={onClose}
+            type="button"
+            aria-label="Close challenge submission"
+            data-dialog-initial-focus
             className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200 transition-colors"
           >
             <X className="w-5 h-5" />
@@ -294,6 +304,7 @@ export const SubmitChallengeModal: React.FC<SubmitChallengeModalProps> = ({
                 </h3>
               </div>
               <select
+                aria-label="Select the language of your notes"
                 value={selectedLanguage}
                 onChange={(e) => setSelectedLanguage(e.target.value)}
                 className="text-[11px] font-semibold bg-white border border-indigo-200 rounded px-2 py-0.5 text-indigo-900"
@@ -309,6 +320,7 @@ export const SubmitChallengeModal: React.FC<SubmitChallengeModalProps> = ({
             </div>
 
             <textarea
+              aria-label="Describe the challenge in your own language"
               rows={2}
               value={rawCitizenNotes}
               onChange={(e) => setRawCitizenNotes(e.target.value)}
@@ -367,7 +379,7 @@ export const SubmitChallengeModal: React.FC<SubmitChallengeModalProps> = ({
             {/* Title */}
             <div>
               <div className="flex items-center justify-between mb-1">
-                <label className="block text-xs font-bold text-slate-700">
+                <label htmlFor="challenge-title" className="block text-xs font-bold text-slate-700">
                   Challenge Title <span className="text-rose-500">*</span>
                 </label>
                 <button
@@ -381,6 +393,7 @@ export const SubmitChallengeModal: React.FC<SubmitChallengeModalProps> = ({
                 </button>
               </div>
               <input
+                id="challenge-title"
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
@@ -393,10 +406,11 @@ export const SubmitChallengeModal: React.FC<SubmitChallengeModalProps> = ({
             {/* Category & SDG Selection */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
+                <label htmlFor="challenge-category" className="block text-xs font-bold text-slate-700 mb-1">
                   Societal Category
                 </label>
                 <select
+                  id="challenge-category"
                   value={category}
                   onChange={(e) => setCategory(e.target.value as ChallengeCategory)}
                   className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs font-medium"
@@ -410,10 +424,11 @@ export const SubmitChallengeModal: React.FC<SubmitChallengeModalProps> = ({
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
+                <label htmlFor="challenge-sdg" className="block text-xs font-bold text-slate-700 mb-1">
                   Primary UN SDG Goal
                 </label>
                 <select
+                  id="challenge-sdg"
                   value={sdgNumber}
                   onChange={(e) => {
                     const val = Number(e.target.value);
@@ -449,7 +464,7 @@ export const SubmitChallengeModal: React.FC<SubmitChallengeModalProps> = ({
             {/* Description with AI Polish trigger */}
             <div>
               <div className="flex items-center justify-between mb-1">
-                <label className="block text-xs font-bold text-slate-700">
+                <label htmlFor="challenge-description" className="block text-xs font-bold text-slate-700">
                   Comprehensive Problem Description <span className="text-rose-500">*</span>
                 </label>
                 <button
@@ -463,6 +478,7 @@ export const SubmitChallengeModal: React.FC<SubmitChallengeModalProps> = ({
                 </button>
               </div>
               <textarea
+                id="challenge-description"
                 rows={4}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
@@ -475,10 +491,11 @@ export const SubmitChallengeModal: React.FC<SubmitChallengeModalProps> = ({
             {/* Location & Geo-coordinates */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200">
               <div>
-                <label className="block text-[11px] font-bold text-slate-700 mb-1">
+                <label htmlFor="challenge-city" className="block text-[11px] font-bold text-slate-700 mb-1">
                   City / District
                 </label>
                 <input
+                  id="challenge-city"
                   type="text"
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
@@ -487,8 +504,9 @@ export const SubmitChallengeModal: React.FC<SubmitChallengeModalProps> = ({
               </div>
 
               <div>
-                <label className="block text-[11px] font-bold text-slate-700 mb-1">State</label>
+                <label htmlFor="challenge-state" className="block text-[11px] font-bold text-slate-700 mb-1">State</label>
                 <input
+                  id="challenge-state"
                   type="text"
                   value={state}
                   onChange={(e) => setState(e.target.value)}
@@ -509,6 +527,7 @@ export const SubmitChallengeModal: React.FC<SubmitChallengeModalProps> = ({
                 </div>
                 <div className="flex gap-1 text-xs">
                   <input
+                    aria-label="Latitude"
                     type="number"
                     step="0.0001"
                     value={latitude}
@@ -517,6 +536,7 @@ export const SubmitChallengeModal: React.FC<SubmitChallengeModalProps> = ({
                     placeholder="Lat"
                   />
                   <input
+                    aria-label="Longitude"
                     type="number"
                     step="0.0001"
                     value={longitude}
@@ -531,10 +551,11 @@ export const SubmitChallengeModal: React.FC<SubmitChallengeModalProps> = ({
             {/* Impacted Population & Severity */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
+                <label htmlFor="challenge-population" className="block text-xs font-bold text-slate-700 mb-1">
                   Impacted Citizens Count
                 </label>
                 <input
+                  id="challenge-population"
                   type="number"
                   value={impactedPopulation}
                   onChange={(e) => setImpactedPopulation(Number(e.target.value))}
@@ -543,10 +564,11 @@ export const SubmitChallengeModal: React.FC<SubmitChallengeModalProps> = ({
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
+                <label htmlFor="challenge-severity" className="block text-xs font-bold text-slate-700 mb-1">
                   Severity Level
                 </label>
                 <select
+                  id="challenge-severity"
                   value={severity}
                   onChange={(e) => setSeverity(e.target.value as SeverityLevel)}
                   className="w-full px-3 py-1.5 bg-white border border-slate-300 rounded-lg text-xs"
@@ -559,10 +581,11 @@ export const SubmitChallengeModal: React.FC<SubmitChallengeModalProps> = ({
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
+                <label htmlFor="challenge-bounty" className="block text-xs font-bold text-slate-700 mb-1">
                   Suggested Grant Pool (INR)
                 </label>
                 <input
+                  id="challenge-bounty"
                   type="number"
                   value={bountyAmount}
                   onChange={(e) => setBountyAmount(Number(e.target.value))}
@@ -573,10 +596,11 @@ export const SubmitChallengeModal: React.FC<SubmitChallengeModalProps> = ({
 
             {/* Required STEM Disciplines */}
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">
+              <label htmlFor="challenge-disciplines" className="block text-xs font-bold text-slate-700 mb-1">
                 Required Technical Disciplines (comma separated)
               </label>
               <input
+                id="challenge-disciplines"
                 type="text"
                 value={disciplinesInput}
                 onChange={(e) => setDisciplinesInput(e.target.value)}
@@ -596,13 +620,15 @@ export const SubmitChallengeModal: React.FC<SubmitChallengeModalProps> = ({
                     key={idx}
                     type="button"
                     onClick={() => setSelectedImage(img)}
+                    aria-label={`Select field evidence image ${idx + 1}`}
+                    aria-pressed={selectedImage === img}
                     className={`relative rounded-lg overflow-hidden border-2 h-16 transition-all ${
                       selectedImage === img
                         ? 'border-emerald-600 ring-2 ring-emerald-500/30 scale-105'
                         : 'border-slate-200 opacity-70 hover:opacity-100'
                     }`}
                   >
-                    <img src={img} alt="preset" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                    <img src={img} alt={`Field evidence option ${idx + 1}`} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                     {selectedImage === img && (
                       <div className="absolute inset-0 bg-emerald-600/30 flex items-center justify-center text-white">
                         <CheckCircle2 className="w-4 h-4" />

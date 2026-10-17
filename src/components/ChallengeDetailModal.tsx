@@ -26,6 +26,7 @@ import {
   ChevronRight
 } from 'lucide-react';
 import { Challenge, Solution, UserRole } from '../types';
+import { useDialogAccessibility } from '../hooks/useDialogAccessibility';
 
 interface ChallengeDetailModalProps {
   challenge: Challenge;
@@ -46,6 +47,7 @@ export const ChallengeDetailModal: React.FC<ChallengeDetailModalProps> = ({
   onOpenProposalGenerator,
   onRefresh,
 }) => {
+  const dialogRef = useDialogAccessibility(onClose);
   const [activeTab, setActiveTab] = useState<'overview' | 'ai_triage' | 'solutions' | 'bounty' | 'discussion'>('overview');
   const [commentText, setCommentText] = useState('');
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
@@ -137,6 +139,11 @@ export const ChallengeDetailModal: React.FC<ChallengeDetailModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
       <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="challenge-detail-title"
+        tabIndex={-1}
         className="bg-white rounded-2xl border border-slate-200 w-full max-w-5xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200"
         id="challenge-detail-modal"
       >
@@ -161,7 +168,7 @@ export const ChallengeDetailModal: React.FC<ChallengeDetailModalProps> = ({
               )}
             </div>
 
-            <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 leading-tight">
+            <h2 id="challenge-detail-title" className="text-xl sm:text-2xl font-extrabold text-slate-900 leading-tight">
               {challenge.title}
             </h2>
 
@@ -183,6 +190,9 @@ export const ChallengeDetailModal: React.FC<ChallengeDetailModalProps> = ({
 
           <button
             onClick={onClose}
+            type="button"
+            aria-label="Close challenge details"
+            data-dialog-initial-focus
             className="p-2 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200/70 transition-colors shrink-0"
             id="close-modal-btn"
           >
@@ -194,6 +204,8 @@ export const ChallengeDetailModal: React.FC<ChallengeDetailModalProps> = ({
         <div className="flex items-center gap-1 px-4 sm:px-6 border-b border-slate-200 bg-white overflow-x-auto text-xs font-semibold">
           <button
             onClick={() => setActiveTab('overview')}
+            type="button"
+            aria-pressed={activeTab === 'overview'}
             className={`py-3 px-3 border-b-2 transition-all whitespace-nowrap ${
               activeTab === 'overview'
                 ? 'border-emerald-600 text-emerald-800'
@@ -205,6 +217,8 @@ export const ChallengeDetailModal: React.FC<ChallengeDetailModalProps> = ({
 
           <button
             onClick={() => setActiveTab('ai_triage')}
+            type="button"
+            aria-pressed={activeTab === 'ai_triage'}
             className={`py-3 px-3 border-b-2 transition-all flex items-center gap-1.5 whitespace-nowrap ${
               activeTab === 'ai_triage'
                 ? 'border-indigo-600 text-indigo-800'
@@ -217,6 +231,8 @@ export const ChallengeDetailModal: React.FC<ChallengeDetailModalProps> = ({
 
           <button
             onClick={() => setActiveTab('solutions')}
+            type="button"
+            aria-pressed={activeTab === 'solutions'}
             className={`py-3 px-3 border-b-2 transition-all flex items-center gap-1.5 whitespace-nowrap ${
               activeTab === 'solutions'
                 ? 'border-emerald-600 text-emerald-800'
@@ -229,6 +245,8 @@ export const ChallengeDetailModal: React.FC<ChallengeDetailModalProps> = ({
 
           <button
             onClick={() => setActiveTab('bounty')}
+            type="button"
+            aria-pressed={activeTab === 'bounty'}
             className={`py-3 px-3 border-b-2 transition-all flex items-center gap-1.5 whitespace-nowrap ${
               activeTab === 'bounty'
                 ? 'border-amber-600 text-amber-800'
@@ -241,6 +259,8 @@ export const ChallengeDetailModal: React.FC<ChallengeDetailModalProps> = ({
 
           <button
             onClick={() => setActiveTab('discussion')}
+            type="button"
+            aria-pressed={activeTab === 'discussion'}
             className={`py-3 px-3 border-b-2 transition-all flex items-center gap-1.5 whitespace-nowrap ${
               activeTab === 'discussion'
                 ? 'border-emerald-600 text-emerald-800'
@@ -590,6 +610,8 @@ export const ChallengeDetailModal: React.FC<ChallengeDetailModalProps> = ({
 
                 <button
                   onClick={() => setShowPledgeForm(!showPledgeForm)}
+                  type="button"
+                  aria-expanded={showPledgeForm}
                   className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold shadow-sm transition-all flex items-center gap-1.5 shrink-0"
                 >
                   <HeartHandshake className="w-4 h-4" />
@@ -603,10 +625,11 @@ export const ChallengeDetailModal: React.FC<ChallengeDetailModalProps> = ({
                   <h4 className="text-xs font-bold text-slate-800 uppercase">Sponsor Challenge Pilot</h4>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-[11px] font-medium text-slate-700 mb-1">
+                      <label htmlFor="pledge-sponsor-name" className="block text-[11px] font-medium text-slate-700 mb-1">
                         Sponsor / Organization Name
                       </label>
                       <input
+                        id="pledge-sponsor-name"
                         type="text"
                         placeholder="e.g. Tata Sustainability Trust / District Mission"
                         value={sponsorName}
@@ -616,10 +639,11 @@ export const ChallengeDetailModal: React.FC<ChallengeDetailModalProps> = ({
                       />
                     </div>
                     <div>
-                      <label className="block text-[11px] font-medium text-slate-700 mb-1">
+                      <label htmlFor="pledge-amount" className="block text-[11px] font-medium text-slate-700 mb-1">
                         Grant Amount (INR)
                       </label>
                       <select
+                        id="pledge-amount"
                         value={pledgeAmount}
                         onChange={(e) => setPledgeAmount(e.target.value)}
                         className="w-full px-3 py-1.5 bg-white border border-slate-300 rounded-lg text-xs"
@@ -686,10 +710,11 @@ export const ChallengeDetailModal: React.FC<ChallengeDetailModalProps> = ({
             <div className="space-y-6">
               {/* Comment Input */}
               <form onSubmit={handlePostComment} className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
-                <label className="block text-xs font-bold text-slate-800">
+                <label htmlFor="challenge-comment" className="block text-xs font-bold text-slate-800">
                   Post Ground Reality Update or Technical Inquiry
                 </label>
                 <textarea
+                  id="challenge-comment"
                   rows={3}
                   value={commentText}
                   onChange={(e) => setCommentText(e.target.value)}

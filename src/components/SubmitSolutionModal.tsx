@@ -15,6 +15,7 @@ import {
   ShieldCheck
 } from 'lucide-react';
 import { Challenge, Solution } from '../types';
+import { useDialogAccessibility } from '../hooks/useDialogAccessibility';
 
 interface SubmitSolutionModalProps {
   challenge: Challenge;
@@ -27,6 +28,7 @@ export const SubmitSolutionModal: React.FC<SubmitSolutionModalProps> = ({
   onClose,
   onSuccess,
 }) => {
+  const dialogRef = useDialogAccessibility(onClose);
   const [teamName, setTeamName] = useState('');
   const [leadName, setLeadName] = useState('');
   const [leadEmail, setLeadEmail] = useState('');
@@ -155,6 +157,11 @@ export const SubmitSolutionModal: React.FC<SubmitSolutionModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
       <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="submit-solution-title"
+        tabIndex={-1}
         className="bg-white rounded-2xl border border-slate-200 w-full max-w-3xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200"
         id="submit-solution-modal"
       >
@@ -164,12 +171,15 @@ export const SubmitSolutionModal: React.FC<SubmitSolutionModalProps> = ({
             <span className="text-[11px] font-bold text-emerald-800 uppercase tracking-wider">
               SIH26043 Solution Proposal
             </span>
-            <h2 className="text-lg font-bold text-slate-900">
+            <h2 id="submit-solution-title" className="text-lg font-bold text-slate-900">
               Submit Innovation for: &ldquo;{challenge.title}&rdquo;
             </h2>
           </div>
           <button
             onClick={onClose}
+            type="button"
+            aria-label="Close solution submission"
+            data-dialog-initial-focus
             className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200 transition-colors"
           >
             <X className="w-5 h-5" />
@@ -226,10 +236,11 @@ export const SubmitSolutionModal: React.FC<SubmitSolutionModalProps> = ({
             {/* Team Details */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200">
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
+                <label htmlFor="solution-team-name" className="block text-xs font-bold text-slate-700 mb-1">
                   Team / Startup Name <span className="text-rose-500">*</span>
                 </label>
                 <input
+                  id="solution-team-name"
                   type="text"
                   value={teamName}
                   onChange={(e) => setTeamName(e.target.value)}
@@ -240,10 +251,11 @@ export const SubmitSolutionModal: React.FC<SubmitSolutionModalProps> = ({
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
+                <label htmlFor="solution-organization" className="block text-xs font-bold text-slate-700 mb-1">
                   College / Research Institution <span className="text-rose-500">*</span>
                 </label>
                 <input
+                  id="solution-organization"
                   type="text"
                   value={collegeOrOrg}
                   onChange={(e) => setCollegeOrOrg(e.target.value)}
@@ -254,10 +266,11 @@ export const SubmitSolutionModal: React.FC<SubmitSolutionModalProps> = ({
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
+                <label htmlFor="solution-lead-name" className="block text-xs font-bold text-slate-700 mb-1">
                   Team Lead Name <span className="text-rose-500">*</span>
                 </label>
                 <input
+                  id="solution-lead-name"
                   type="text"
                   value={leadName}
                   onChange={(e) => setLeadName(e.target.value)}
@@ -268,10 +281,11 @@ export const SubmitSolutionModal: React.FC<SubmitSolutionModalProps> = ({
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
+                <label htmlFor="solution-lead-email" className="block text-xs font-bold text-slate-700 mb-1">
                   Contact Email <span className="text-rose-500">*</span>
                 </label>
                 <input
+                  id="solution-lead-email"
                   type="email"
                   value={leadEmail}
                   onChange={(e) => setLeadEmail(e.target.value)}
@@ -284,10 +298,11 @@ export const SubmitSolutionModal: React.FC<SubmitSolutionModalProps> = ({
 
             {/* Solution Title */}
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">
+              <label htmlFor="solution-title" className="block text-xs font-bold text-slate-700 mb-1">
                 Solution Title <span className="text-rose-500">*</span>
               </label>
               <input
+                id="solution-title"
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
@@ -299,10 +314,11 @@ export const SubmitSolutionModal: React.FC<SubmitSolutionModalProps> = ({
 
             {/* Abstract */}
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">
+              <label htmlFor="solution-abstract" className="block text-xs font-bold text-slate-700 mb-1">
                 Executive Abstract & Value Proposition <span className="text-rose-500">*</span>
               </label>
               <textarea
+                id="solution-abstract"
                 rows={2}
                 value={abstract}
                 onChange={(e) => setAbstract(e.target.value)}
@@ -315,7 +331,7 @@ export const SubmitSolutionModal: React.FC<SubmitSolutionModalProps> = ({
             {/* Technical Methodology */}
             <div>
               <div className="flex items-center justify-between mb-1">
-                <label className="block text-xs font-bold text-slate-700">
+                <label htmlFor="solution-methodology" className="block text-xs font-bold text-slate-700">
                   Technical Architecture & Methodology <span className="text-rose-500">*</span>
                 </label>
                 <button
@@ -329,6 +345,7 @@ export const SubmitSolutionModal: React.FC<SubmitSolutionModalProps> = ({
                 </button>
               </div>
               <textarea
+                id="solution-methodology"
                 rows={4}
                 value={methodology}
                 onChange={(e) => setMethodology(e.target.value)}
@@ -342,9 +359,10 @@ export const SubmitSolutionModal: React.FC<SubmitSolutionModalProps> = ({
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200">
               <div className="sm:col-span-1">
                 <div className="flex items-center justify-between mb-1">
-                  <label className="text-xs font-bold text-slate-700">TRL Level: {trlLevel}</label>
+                  <label htmlFor="solution-trl" className="text-xs font-bold text-slate-700">TRL Level: {trlLevel}</label>
                 </div>
                 <input
+                  id="solution-trl"
                   type="range"
                   min="1"
                   max="9"
@@ -356,8 +374,9 @@ export const SubmitSolutionModal: React.FC<SubmitSolutionModalProps> = ({
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Estimated Budget (INR)</label>
+                <label htmlFor="solution-budget" className="block text-xs font-bold text-slate-700 mb-1">Estimated Budget (INR)</label>
                 <input
+                  id="solution-budget"
                   type="number"
                   value={budget}
                   onChange={(e) => setBudget(Number(e.target.value))}
@@ -366,8 +385,9 @@ export const SubmitSolutionModal: React.FC<SubmitSolutionModalProps> = ({
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Timeline (Weeks)</label>
+                <label htmlFor="solution-duration" className="block text-xs font-bold text-slate-700 mb-1">Timeline (Weeks)</label>
                 <input
+                  id="solution-duration"
                   type="number"
                   value={durationWeeks}
                   onChange={(e) => setDurationWeeks(Number(e.target.value))}
@@ -379,8 +399,9 @@ export const SubmitSolutionModal: React.FC<SubmitSolutionModalProps> = ({
             {/* URLs */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Demo / Prototype URL</label>
+                <label htmlFor="solution-prototype-url" className="block text-xs font-bold text-slate-700 mb-1">Demo / Prototype URL</label>
                 <input
+                  id="solution-prototype-url"
                   type="url"
                   value={prototypeUrl}
                   onChange={(e) => setPrototypeUrl(e.target.value)}
@@ -390,8 +411,9 @@ export const SubmitSolutionModal: React.FC<SubmitSolutionModalProps> = ({
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">GitHub / Open Hardware Repo</label>
+                <label htmlFor="solution-github-url" className="block text-xs font-bold text-slate-700 mb-1">GitHub / Open Hardware Repo</label>
                 <input
+                  id="solution-github-url"
                   type="url"
                   value={githubUrl}
                   onChange={(e) => setGithubUrl(e.target.value)}
