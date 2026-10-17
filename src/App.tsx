@@ -70,6 +70,14 @@ function readSavedChallenges(): Record<string, boolean> {
   }
 }
 
+function normalizeSearchText(value: string): string {
+  return value
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '')
+    .toLocaleLowerCase()
+    .trim();
+}
+
 export function App() {
   const [challenges, setChallenges] = useState<Challenge[]>([]);
   const [analytics, setAnalytics] = useState<AnalyticsSummary | null>(null);
@@ -209,13 +217,21 @@ export function App() {
       if (verifiedOnly && !c.verifiedByOfficial) return false;
       if (showHighPriority && c.severity !== 'Critical' && c.severity !== 'High') return false;
       if (searchQuery.trim()) {
-        const q = searchQuery.toLowerCase();
-        const matchTitle = c.title.toLowerCase().includes(q);
-        const matchDesc = c.description.toLowerCase().includes(q);
-        const matchCity = c.location.city.toLowerCase().includes(q);
-        const matchState = c.location.state.toLowerCase().includes(q);
-        const matchTech = c.primaryTechDisciplines.some((t) => t.toLowerCase().includes(q));
-        if (!matchTitle && !matchDesc && !matchCity && !matchState && !matchTech) {
+        const searchableFields = [
+          c.title,
+          c.description,
+          c.location.city,
+          c.location.state,
+          c.category,
+          c.sdgName,
+          c.reportedBy.name,
+          ...c.primaryTechDisciplines,
+          ...c.solutions.map((solution) => solution.title),
+          ...c.solutions.map((solution) => solution.teamName),
+          ...c.sponsors.map((sponsor) => sponsor.name),
+        ].map(normalizeSearchText);
+        const queryTerms = normalizeSearchText(searchQuery).split(/\s+/).filter(Boolean);
+        if (!queryTerms.every((term) => searchableFields.some((field) => field.includes(term)))) {
           return false;
         }
       }
