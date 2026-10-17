@@ -28,6 +28,7 @@ export const BountiesSection: React.FC<BountiesSectionProps> = ({
   const [sortBy, setSortBy] = useState<'bounty' | 'urgency' | 'solutions'>('bounty');
 
   const fundedChallenges = challenges.filter((c) => c.bountyAmount > 0);
+  const largestGrant = fundedChallenges.reduce((largest, challenge) => Math.max(largest, challenge.bountyAmount), 0);
   const visibleChallenges = fundedChallenges
     .filter((challenge) => filterSponsor === 'All' || challenge.sponsors.some((sponsor) => sponsor.name === filterSponsor))
     .sort((a, b) => {
@@ -68,7 +69,7 @@ export const BountiesSection: React.FC<BountiesSectionProps> = ({
             </div>
             <div className="p-2.5 bg-gray-800/80 rounded-lg border border-gray-700">
               <p className="text-[9px] uppercase font-bold text-gray-400">Max Track</p>
-              <p className="text-sm font-bold text-blue-400 mt-0.5">₹9.0L</p>
+              <p className="text-sm font-bold text-blue-400 mt-0.5">₹{(largestGrant / 100000).toFixed(1)}L</p>
             </div>
             <div className="p-2.5 bg-gray-800/80 rounded-lg border border-gray-700">
               <p className="text-[9px] uppercase font-bold text-gray-400">Target TRL</p>
