@@ -91,7 +91,7 @@ export function App() {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [selectedSeverity, setSelectedSeverity] = useState<string>('All');
   const [selectedStatus, setSelectedStatus] = useState<string>('All');
-  const [sortBy, setSortBy] = useState<'upvotes' | 'bounty' | 'urgency' | 'newest' | 'solutions'>('upvotes');
+  const [sortBy, setSortBy] = useState<'upvotes' | 'bounty' | 'urgency' | 'newest' | 'solutions' | 'population'>('upvotes');
   const [userRole, setUserRole] = useState<UserRole>('innovator');
   const [currentTab, setCurrentTab] = useState<AppTab>('challenges');
   const [favoritesOnly, setFavoritesOnly] = useState<boolean>(false);
@@ -242,6 +242,7 @@ export function App() {
       if (sortBy === 'bounty') return b.bountyAmount - a.bountyAmount;
       if (sortBy === 'urgency') return b.severityScore - a.severityScore;
       if (sortBy === 'solutions') return b.solutionsCount - a.solutionsCount;
+      if (sortBy === 'population') return b.impactedPopulation - a.impactedPopulation;
       if (sortBy === 'newest') return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
       return 0;
     });
@@ -457,13 +458,14 @@ export function App() {
                     <select
                       aria-label="Sort challenges"
                       value={sortBy}
-                      onChange={(e) => setSortBy(e.target.value as 'upvotes' | 'bounty' | 'urgency' | 'newest' | 'solutions')}
+                      onChange={(e) => setSortBy(e.target.value as 'upvotes' | 'bounty' | 'urgency' | 'newest' | 'solutions' | 'population')}
                       className="bg-transparent text-xs font-semibold text-gray-700 focus:outline-hidden cursor-pointer"
                     >
                       <option value="upvotes">Most Citizen Votes</option>
                       <option value="bounty">Highest Bounty Pool</option>
                       <option value="urgency">Urgency / Severity Score</option>
                       <option value="solutions">Most Solutions Submitted</option>
+                      <option value="population">Most Citizens Impacted</option>
                       <option value="newest">Recently Reported</option>
                     </select>
                   </div>
