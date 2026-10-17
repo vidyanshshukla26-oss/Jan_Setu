@@ -72,7 +72,6 @@ export const ChallengeCard: React.FC<ChallengeCardProps> = ({
     Math.max(15, challenge.solutionsCount * 22 + (challenge.status === 'pilot_in_progress' ? 40 : 10))
   );
 
-  const contributorsCount = challenge.solutionsCount * 8 + challenge.upvotes + 4;
   const shortId = challenge.id.replace(/[^a-zA-Z0-9]/g, '').slice(-3).toUpperCase() || '882';
 
   return (
@@ -186,8 +185,8 @@ export const ChallengeCard: React.FC<ChallengeCardProps> = ({
                 K
               </div>
             </div>
-            <span className="text-[10px] font-bold text-blue-600">
-              {contributorsCount} Contributors
+            <span className="text-[10px] font-bold text-blue-600" aria-label={`${challenge.solutionsCount} solutions submitted`}>
+              {challenge.solutionsCount} {challenge.solutionsCount === 1 ? 'Solution' : 'Solutions'}
             </span>
           </div>
 
