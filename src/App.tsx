@@ -132,6 +132,9 @@ export function App() {
         fetch('/api/challenges'),
         fetch('/api/analytics'),
       ]);
+      if (!chRes.ok || !anRes.ok) {
+        throw new Error(`Challenge service returned ${chRes.status}; analytics service returned ${anRes.status}`);
+      }
       const chData = await chRes.json();
       const anData = await anRes.json();
 
@@ -142,9 +145,13 @@ export function App() {
           const linkedChallenge = chData.data.find((challenge: Challenge) => challenge.id === linkedChallengeId);
           if (linkedChallenge) setSelectedChallenge(linkedChallenge);
         }
+      } else {
+        throw new Error('Challenge response did not contain a valid data list');
       }
       if (anData.success && anData.data) {
         setAnalytics(anData.data);
+      } else {
+        throw new Error('Analytics response did not contain valid data');
       }
     } catch (err) {
       console.error('Fetch error:', err);
