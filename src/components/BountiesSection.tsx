@@ -27,6 +27,11 @@ export const BountiesSection: React.FC<BountiesSectionProps> = ({
   const [filterSponsor, setFilterSponsor] = useState<string>('All');
 
   const fundedChallenges = challenges.filter((c) => c.bountyAmount > 0);
+  const visibleChallenges = fundedChallenges.filter(
+    (challenge) => filterSponsor === 'All' || challenge.sponsors.some((sponsor) => sponsor.name === filterSponsor),
+  );
+  const sponsorOptions = [...new Set(fundedChallenges.flatMap((challenge) => challenge.sponsors.map((sponsor) => sponsor.name)))]
+    .sort((a, b) => a.localeCompare(b));
   const totalGrantPool = challenges.reduce((acc, c) => acc + c.bountyAmount, 0);
 
   return (
@@ -76,15 +81,27 @@ export const BountiesSection: React.FC<BountiesSectionProps> = ({
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <h3 className="font-bold text-gray-900 text-base">
-            Featured Grand Societal Challenges ({fundedChallenges.length})
+            Featured Grand Societal Challenges ({visibleChallenges.length})
           </h3>
-          <span className="text-[11px] text-gray-500 font-medium">
-            Ranked by bounty prize pool & field urgency
-          </span>
+          <div className="flex items-center gap-2">
+            <label htmlFor="bounty-sponsor-filter" className="sr-only">Filter by sponsor</label>
+            <select
+              id="bounty-sponsor-filter"
+              value={filterSponsor}
+              onChange={(event) => setFilterSponsor(event.target.value)}
+              className="rounded-lg border border-gray-300 bg-white px-2.5 py-1.5 text-xs font-semibold text-gray-700"
+            >
+              <option value="All">All sponsors</option>
+              {sponsorOptions.map((sponsor) => <option key={sponsor} value={sponsor}>{sponsor}</option>)}
+            </select>
+            <span className="hidden sm:inline text-[11px] text-gray-500 font-medium">
+              Ranked by bounty prize pool &amp; field urgency
+            </span>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {fundedChallenges.map((challenge) => (
+          {visibleChallenges.map((challenge) => (
             <div
               key={challenge.id}
               onClick={() => onSelectChallenge(challenge)}
@@ -136,6 +153,11 @@ export const BountiesSection: React.FC<BountiesSectionProps> = ({
                       </span>
                     ))}
                   </div>
+                  {visibleChallenges.length === 0 && (
+                    <p className="rounded-xl border border-dashed border-gray-300 bg-white p-8 text-center text-sm text-gray-600">
+                      No funded challenges are associated with this sponsor yet.
+                    </p>
+                  )}
                 </div>
               </div>
 
