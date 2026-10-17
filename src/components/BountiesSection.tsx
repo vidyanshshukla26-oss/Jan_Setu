@@ -119,10 +119,9 @@ export const BountiesSection: React.FC<BountiesSectionProps> = ({
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {visibleChallenges.map((challenge) => (
-            <div
+            <article
               key={challenge.id}
-              onClick={() => onSelectChallenge(challenge)}
-              className="bg-white rounded-xl border border-gray-200 p-4 hover:border-blue-400 transition-all shadow-xs hover:shadow-md cursor-pointer flex flex-col justify-between group"
+              className="bg-white rounded-xl border border-gray-200 p-4 hover:border-blue-400 transition-all shadow-xs hover:shadow-md flex flex-col justify-between group"
             >
               <div>
                 {/* Header Badge */}
@@ -144,7 +143,13 @@ export const BountiesSection: React.FC<BountiesSectionProps> = ({
 
                 {/* Title */}
                 <h4 className="font-bold text-gray-900 text-base group-hover:text-blue-600 transition-colors leading-snug mb-1.5">
-                  {challenge.title}
+                  <button
+                    type="button"
+                    onClick={() => onSelectChallenge(challenge)}
+                    className="text-left hover:text-blue-700"
+                  >
+                    {challenge.title}
+                  </button>
                 </h4>
 
                 <p className="text-xs text-gray-500 line-clamp-2 leading-relaxed mb-3">
@@ -186,12 +191,16 @@ export const BountiesSection: React.FC<BountiesSectionProps> = ({
                     {challenge.impactedPopulation.toLocaleString()} citizens
                   </strong>
                 </span>
-                <span className="font-bold text-blue-600 group-hover:translate-x-1 transition-transform flex items-center gap-1 text-xs">
+                <button
+                  type="button"
+                  onClick={() => onSelectChallenge(challenge)}
+                  className="font-bold text-blue-600 group-hover:translate-x-1 transition-transform flex items-center gap-1 text-xs"
+                >
                   <span>View & Apply</span>
                   <ArrowRight className="w-3 h-3" />
-                </span>
+                </button>
               </div>
-            </div>
+            </article>
           ))}
         </div>
       </div>
