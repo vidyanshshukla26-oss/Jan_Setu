@@ -38,6 +38,7 @@ export const AIProposalStudio: React.FC<AIProposalStudioProps> = ({
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
   const [proposalData, setProposalData] = useState<any>(null);
   const [copied, setCopied] = useState<boolean>(false);
+  const [copyError, setCopyError] = useState<string>('');
 
   const selectedChallenge = challenges.find((c) => c.id === selectedChallengeId);
   const solutionsList = selectedChallenge?.solutions || [];
@@ -66,8 +67,9 @@ export const AIProposalStudio: React.FC<AIProposalStudioProps> = ({
     }
   };
 
-  const handleCopy = () => {
+  const handleCopy = async () => {
     if (!proposalData) return;
+    setCopyError('');
     const text = `# ${proposalData.projectTitle}
 ## Executive Summary
 ${proposalData.executiveSummary}
@@ -90,9 +92,14 @@ ${proposalData.measurableImpactKPIs?.map((k: string) => `- ${k}`).join('\n')}
 ## CSR & Government Policy Alignment
 ${proposalData.csrAndGovernmentAlignment}`;
 
-    navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2500);
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    } catch (error) {
+      console.error('Proposal copy failed:', error);
+      setCopyError('Could not copy the proposal. Check clipboard access and try again.');
+    }
   };
 
   return (
@@ -134,6 +141,7 @@ ${proposalData.csrAndGovernmentAlignment}`;
           </div>
         )}
       </div>
+      {copyError && <p role="alert" className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-xs font-medium text-rose-800">{copyError}</p>}
 
       {/* Control Configuration Matrix */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-200">
