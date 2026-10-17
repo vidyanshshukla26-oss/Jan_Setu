@@ -273,6 +273,16 @@ export function App() {
 
   const savedChallengeCount = Object.values(savedChallenges).filter(Boolean).length;
   const highPriorityCount = challenges.filter((challenge) => challenge.severity === 'Critical' || challenge.severity === 'High').length;
+  const activeFilters = [
+    ...(searchQuery ? [{ label: `Search: ${searchQuery}`, clear: () => setSearchQuery('') }] : []),
+    ...(selectedCategory !== 'All' ? [{ label: selectedCategory, clear: () => setSelectedCategory('All') }] : []),
+    ...(selectedSeverity !== 'All' ? [{ label: `${selectedSeverity} urgency`, clear: () => setSelectedSeverity('All') }] : []),
+    ...(selectedStatus !== 'All' ? [{ label: `Status: ${selectedStatus.replaceAll('_', ' ')}`, clear: () => setSelectedStatus('All') }] : []),
+    ...(minimumBounty ? [{ label: `Grant ≥ ₹${Number(minimumBounty).toLocaleString()}`, clear: () => setMinimumBounty('') }] : []),
+    ...(favoritesOnly ? [{ label: 'Saved only', clear: () => setFavoritesOnly(false) }] : []),
+    ...(verifiedOnly ? [{ label: 'Verified only', clear: () => setVerifiedOnly(false) }] : []),
+    ...(showHighPriority ? [{ label: 'High priority', clear: () => setShowHighPriority(false) }] : []),
+  ];
 
   const quickInsights = [
     { label: 'Verified Challenges', value: `${challenges.filter((c) => c.verifiedByOfficial).length}`, icon: ShieldCheck, tone: 'bg-emerald-50 text-emerald-700' },
@@ -532,6 +542,22 @@ export function App() {
                   {savedChallengeCount} saved
                 </div>
               </div>
+
+              {activeFilters.length > 0 && (
+                <div aria-label="Active challenge filters" className="flex flex-wrap items-center gap-1.5">
+                  <span className="text-[11px] font-semibold text-gray-500">Active filters:</span>
+                  {activeFilters.map(({ label, clear }) => (
+                    <button
+                      key={label}
+                      type="button"
+                      onClick={clear}
+                      className="rounded-full border border-blue-200 bg-blue-50 px-2.5 py-1 text-[11px] font-medium text-blue-800 hover:bg-blue-100"
+                    >
+                      {label} <span aria-hidden="true">×</span>
+                    </button>
+                  ))}
+                </div>
+              )}
 
               {/* Category Filter Chips */}
               <div role="group" aria-label="Filter challenges by category" className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
