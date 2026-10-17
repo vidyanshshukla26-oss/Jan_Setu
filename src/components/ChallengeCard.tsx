@@ -52,6 +52,21 @@ export const ChallengeCard: React.FC<ChallengeCardProps> = ({
     }
   };
 
+  const getStatusLabel = (status: Challenge['status']) => {
+    switch (status) {
+      case 'open_for_solutions':
+        return 'Open for solutions';
+      case 'under_review':
+        return 'Under review';
+      case 'pilot_in_progress':
+        return 'Pilot in progress';
+      case 'grant_allocated':
+        return 'Grant allocated';
+      case 'resolved':
+        return 'Resolved';
+    }
+  };
+
   const progressPercent = Math.min(
     95,
     Math.max(15, challenge.solutionsCount * 22 + (challenge.status === 'pilot_in_progress' ? 40 : 10))
@@ -79,6 +94,9 @@ export const ChallengeCard: React.FC<ChallengeCardProps> = ({
             </span>
             <span className="px-2 py-0.5 bg-gray-100 text-gray-700 text-[10px] font-semibold rounded">
               SDG {challenge.sdgNumber}
+            </span>
+            <span className="px-2 py-0.5 bg-indigo-50 text-indigo-800 text-[10px] font-semibold rounded border border-indigo-100">
+              {getStatusLabel(challenge.status)}
             </span>
           </div>
           <span className="text-[10px] font-mono text-gray-400 font-semibold">
