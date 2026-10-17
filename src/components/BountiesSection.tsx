@@ -25,11 +25,16 @@ export const BountiesSection: React.FC<BountiesSectionProps> = ({
   onSelectChallenge,
 }) => {
   const [filterSponsor, setFilterSponsor] = useState<string>('All');
+  const [sortBy, setSortBy] = useState<'bounty' | 'urgency' | 'solutions'>('bounty');
 
   const fundedChallenges = challenges.filter((c) => c.bountyAmount > 0);
-  const visibleChallenges = fundedChallenges.filter(
-    (challenge) => filterSponsor === 'All' || challenge.sponsors.some((sponsor) => sponsor.name === filterSponsor),
-  );
+  const visibleChallenges = fundedChallenges
+    .filter((challenge) => filterSponsor === 'All' || challenge.sponsors.some((sponsor) => sponsor.name === filterSponsor))
+    .sort((a, b) => {
+      if (sortBy === 'urgency') return b.severityScore - a.severityScore;
+      if (sortBy === 'solutions') return b.solutionsCount - a.solutionsCount;
+      return b.bountyAmount - a.bountyAmount;
+    });
   const sponsorOptions = [...new Set(fundedChallenges.flatMap((challenge) => challenge.sponsors.map((sponsor) => sponsor.name)))]
     .sort((a, b) => a.localeCompare(b));
   const totalGrantPool = challenges.reduce((acc, c) => acc + c.bountyAmount, 0);
@@ -93,6 +98,17 @@ export const BountiesSection: React.FC<BountiesSectionProps> = ({
             >
               <option value="All">All sponsors</option>
               {sponsorOptions.map((sponsor) => <option key={sponsor} value={sponsor}>{sponsor}</option>)}
+            </select>
+            <label htmlFor="bounty-sort" className="sr-only">Sort funded challenges</label>
+            <select
+              id="bounty-sort"
+              value={sortBy}
+              onChange={(event) => setSortBy(event.target.value as typeof sortBy)}
+              className="rounded-lg border border-gray-300 bg-white px-2.5 py-1.5 text-xs font-semibold text-gray-700"
+            >
+              <option value="bounty">Largest grant</option>
+              <option value="urgency">Highest urgency</option>
+              <option value="solutions">Most solutions</option>
             </select>
             <span className="hidden sm:inline text-[11px] text-gray-500 font-medium">
               Ranked by bounty prize pool &amp; field urgency
