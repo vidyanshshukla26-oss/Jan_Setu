@@ -17,7 +17,9 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({ challenges }) => {
   const contributors: RankingRow[] = [];
   challenges.forEach((challenge) => {
     const name = challenge.reportedBy.name;
-    const existing = contributors.find((row) => row.name === name);
+    const existing = contributors.find(
+      (row) => row.name === name && row.detail.startsWith(`${challenge.reportedBy.role} •`),
+    );
     const score = challenge.upvotes + challenge.comments.length * 2 + challenge.solutionsCount * 4;
     if (existing) {
       existing.score += score;
