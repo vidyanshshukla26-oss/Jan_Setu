@@ -91,6 +91,7 @@ export function App() {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [selectedSeverity, setSelectedSeverity] = useState<string>('All');
   const [selectedStatus, setSelectedStatus] = useState<string>('All');
+  const [minimumBounty, setMinimumBounty] = useState<string>('');
   const [sortBy, setSortBy] = useState<'upvotes' | 'bounty' | 'urgency' | 'newest' | 'solutions' | 'population'>('upvotes');
   const [userRole, setUserRole] = useState<UserRole>('innovator');
   const [currentTab, setCurrentTab] = useState<AppTab>('challenges');
@@ -213,6 +214,7 @@ export function App() {
       if (selectedCategory !== 'All' && c.category !== selectedCategory) return false;
       if (selectedSeverity !== 'All' && c.severity !== selectedSeverity) return false;
       if (selectedStatus !== 'All' && c.status !== selectedStatus) return false;
+      if (minimumBounty && c.bountyAmount < Number(minimumBounty)) return false;
       if (favoritesOnly && !savedChallenges[c.id]) return false;
       if (verifiedOnly && !c.verifiedByOfficial) return false;
       if (showHighPriority && c.severity !== 'Critical' && c.severity !== 'High') return false;
@@ -336,6 +338,7 @@ export function App() {
                     setSelectedCategory('All');
                     setSelectedSeverity('All');
                     setSelectedStatus('All');
+                    setMinimumBounty('');
                     setSortBy('upvotes');
                     setSearchQuery('');
                     setFavoritesOnly(false);
@@ -453,6 +456,20 @@ export function App() {
                     <option value="pilot_in_progress">Pilot in progress</option>
                     <option value="resolved">Resolved</option>
                   </select>
+
+                  <label className="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-gray-50 px-2.5 py-1.5 text-xs font-semibold text-gray-700">
+                    Minimum grant (₹)
+                    <input
+                      aria-label="Minimum grant amount in rupees"
+                      type="number"
+                      min="0"
+                      step="50000"
+                      value={minimumBounty}
+                      onChange={(event) => setMinimumBounty(event.target.value)}
+                      className="w-24 bg-transparent font-normal focus:outline-none"
+                      placeholder="Any"
+                    />
+                  </label>
 
                   {/* Sorting dropdown */}
                   <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-lg px-2.5 py-1.5">
