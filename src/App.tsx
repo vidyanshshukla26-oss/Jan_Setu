@@ -619,6 +619,11 @@ export function App() {
             </div>
 
             {/* Challenge Cards Grid */}
+            {!loading && !loadError && (
+              <p className="text-xs font-semibold text-gray-600" aria-live="polite">
+                Showing {filteredChallenges.length} of {challenges.length} challenges
+              </p>
+            )}
             <p role="status" aria-live="polite" className="sr-only">
               {loading ? 'Loading challenges.' : loadError ? loadError : `${filteredChallenges.length} challenges found.`}
             </p>
