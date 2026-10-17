@@ -31,6 +31,7 @@ import {
   Gauge,
   HandCoins,
   Type,
+  X,
 } from 'lucide-react';
 import { Challenge, Solution, UserRole, AnalyticsSummary, ChallengeCategory, AppTab } from './types';
 import { Navbar } from './components/Navbar';
@@ -427,6 +428,16 @@ export function App() {
                     placeholder="Search by keywords, city, state, or tech..."
                     className="w-full pl-8 pr-3 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-xs text-gray-900 focus:bg-white focus:ring-1 focus:ring-blue-600 focus:outline-hidden"
                   />
+                  {searchQuery && (
+                    <button
+                      type="button"
+                      onClick={() => setSearchQuery('')}
+                      aria-label="Clear challenge search"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-gray-500 hover:bg-gray-200"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  )}
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-end">
