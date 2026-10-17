@@ -32,6 +32,7 @@ import {
   HandCoins,
   Type,
   X,
+  Download,
 } from 'lucide-react';
 import { Challenge, Solution, UserRole, AnalyticsSummary, ChallengeCategory, AppTab } from './types';
 import { Navbar } from './components/Navbar';
@@ -299,6 +300,32 @@ export function App() {
     }));
   };
 
+  const exportFilteredChallenges = () => {
+    const columns = ['ID', 'Title', 'Category', 'Urgency', 'Status', 'City', 'State', 'SDG', 'Upvotes', 'Grant (INR)', 'Solutions'];
+    const escapeCsv = (value: string | number) => `"${String(value).replaceAll('"', '""')}"`;
+    const rows = filteredChallenges.map((challenge) => [
+      challenge.id,
+      challenge.title,
+      challenge.category,
+      challenge.severity,
+      challenge.status,
+      challenge.location.city,
+      challenge.location.state,
+      challenge.sdgNumber,
+      challenge.upvotes,
+      challenge.bountyAmount,
+      challenge.solutionsCount,
+    ]);
+    const csv = [columns, ...rows].map((row) => row.map(escapeCsv).join(',')).join('\r\n');
+    const blob = new Blob([`\uFEFF${csv}`], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'jansetu-challenges.csv';
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
   const savedChallengeCount = Object.values(savedChallenges).filter(Boolean).length;
   const highPriorityCount = challenges.filter((challenge) => challenge.severity === 'Critical' || challenge.severity === 'High').length;
   const activeFilters = [
@@ -377,6 +404,15 @@ export function App() {
               </div>
 
               <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={exportFilteredChallenges}
+                  disabled={filteredChallenges.length === 0}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3.5 py-1.5 text-xs font-semibold text-gray-700 shadow-2xs transition-all hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <Download className="h-3.5 w-3.5" />
+                  Export CSV
+                </button>
                 <button
                   onClick={() => {
                     setSelectedCategory('All');
