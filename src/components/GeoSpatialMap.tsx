@@ -215,11 +215,14 @@ export const GeoSpatialMap: React.FC<GeoSpatialMapProps> = ({
               const isSelected = activePin?.id === ch.id;
 
               return (
-                <div
+                <button
+                  type="button"
                   key={ch.id}
                   style={{ left: `${pos.x}%`, top: `${pos.y}%` }}
-                  className="absolute -translate-x-1/2 -translate-y-1/2 group cursor-pointer"
+                  className="absolute -translate-x-1/2 -translate-y-1/2 group cursor-pointer border-0 bg-transparent p-0"
                   onClick={() => setActivePin(ch)}
+                  aria-label={`Select ${ch.title} hotspot in ${ch.location.city}, ${ch.location.state}. ${ch.severity} urgency.`}
+                  aria-pressed={isSelected}
                 >
                   {/* Pulsing beacon ring for Critical */}
                   {ch.severity === 'Critical' && (
@@ -233,7 +236,7 @@ export const GeoSpatialMap: React.FC<GeoSpatialMapProps> = ({
                     } transition-all duration-200`}
                   >
                     <span>{ch.sdgNumber}</span>
-                  </div>
+                  </button>
 
                   {/* Mini Hover Tooltip */}
                   <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block whitespace-nowrap z-30 pointer-events-none">
