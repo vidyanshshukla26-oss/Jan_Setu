@@ -92,6 +92,7 @@ export function App() {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [selectedSeverity, setSelectedSeverity] = useState<string>('All');
   const [selectedStatus, setSelectedStatus] = useState<string>('All');
+  const [selectedCity, setSelectedCity] = useState<string>('All');
   const [minimumBounty, setMinimumBounty] = useState<string>('');
   const [sortBy, setSortBy] = useState<'upvotes' | 'bounty' | 'urgency' | 'newest' | 'solutions' | 'population'>('upvotes');
   const [userRole, setUserRole] = useState<UserRole>('innovator');
@@ -216,6 +217,7 @@ export function App() {
       if (selectedCategory !== 'All' && c.category !== selectedCategory) return false;
       if (selectedSeverity !== 'All' && c.severity !== selectedSeverity) return false;
       if (selectedStatus !== 'All' && c.status !== selectedStatus) return false;
+      if (selectedCity !== 'All' && c.location.city !== selectedCity) return false;
       if (minimumBounty && c.bountyAmount < Number(minimumBounty)) return false;
       if (favoritesOnly && !savedChallenges[c.id]) return false;
       if (verifiedOnly && !c.verifiedByOfficial) return false;
@@ -280,12 +282,14 @@ export function App() {
     ...(selectedCategory !== 'All' ? [{ label: selectedCategory, clear: () => setSelectedCategory('All') }] : []),
     ...(selectedSeverity !== 'All' ? [{ label: `${selectedSeverity} urgency`, clear: () => setSelectedSeverity('All') }] : []),
     ...(selectedStatus !== 'All' ? [{ label: `Status: ${selectedStatus.replaceAll('_', ' ')}`, clear: () => setSelectedStatus('All') }] : []),
+    ...(selectedCity !== 'All' ? [{ label: `City: ${selectedCity}`, clear: () => setSelectedCity('All') }] : []),
     ...(minimumBounty ? [{ label: `Grant ≥ ₹${Number(minimumBounty).toLocaleString()}`, clear: () => setMinimumBounty('') }] : []),
     ...(favoritesOnly ? [{ label: 'Saved only', clear: () => setFavoritesOnly(false) }] : []),
     ...(verifiedOnly ? [{ label: 'Verified only', clear: () => setVerifiedOnly(false) }] : []),
     ...(showHighPriority ? [{ label: 'High priority', clear: () => setShowHighPriority(false) }] : []),
     ...(hasSolutionsOnly ? [{ label: 'Has solutions', clear: () => setHasSolutionsOnly(false) }] : []),
   ];
+  const availableCities = [...new Set(challenges.map((challenge) => challenge.location.city))].sort((a, b) => a.localeCompare(b));
 
   const quickInsights = [
     { label: 'Verified Challenges', value: `${challenges.filter((c) => c.verifiedByOfficial).length}`, icon: ShieldCheck, tone: 'bg-emerald-50 text-emerald-700' },
@@ -352,6 +356,7 @@ export function App() {
                     setSelectedCategory('All');
                     setSelectedSeverity('All');
                     setSelectedStatus('All');
+                    setSelectedCity('All');
                     setMinimumBounty('');
                     setSortBy('upvotes');
                     setSearchQuery('');
@@ -480,6 +485,16 @@ export function App() {
                     <option value="under_review">Under review</option>
                     <option value="pilot_in_progress">Pilot in progress</option>
                     <option value="resolved">Resolved</option>
+                  </select>
+
+                  <select
+                    aria-label="Filter challenges by city"
+                    value={selectedCity}
+                    onChange={(event) => setSelectedCity(event.target.value)}
+                    className="px-2.5 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-xs font-semibold text-gray-700 cursor-pointer"
+                  >
+                    <option value="All">All Cities</option>
+                    {availableCities.map((city) => <option key={city} value={city}>{city}</option>)}
                   </select>
 
                   <label className="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-gray-50 px-2.5 py-1.5 text-xs font-semibold text-gray-700">
@@ -693,6 +708,7 @@ export function App() {
                     setSelectedCategory('All');
                     setSelectedSeverity('All');
                     setSelectedStatus('All');
+                    setSelectedCity('All');
                     setMinimumBounty('');
                     setFavoritesOnly(false);
                     setVerifiedOnly(false);
