@@ -129,6 +129,11 @@ export function App() {
 
       if (chData.success && Array.isArray(chData.data)) {
         setChallenges(chData.data);
+        const linkedChallengeId = new URLSearchParams(window.location.search).get('challenge');
+        if (linkedChallengeId) {
+          const linkedChallenge = chData.data.find((challenge: Challenge) => challenge.id === linkedChallengeId);
+          if (linkedChallenge) setSelectedChallenge(linkedChallenge);
+        }
       }
       if (anData.success && anData.data) {
         setAnalytics(anData.data);
