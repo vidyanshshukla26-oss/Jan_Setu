@@ -80,6 +80,13 @@ function normalizeSearchText(value: string): string {
     .trim();
 }
 
+function readUserRole(): UserRole {
+  const role = localStorage.getItem('jansetu-user-role');
+  return role === 'citizen' || role === 'innovator' || role === 'government_csr' || role === 'evaluator'
+    ? role
+    : 'innovator';
+}
+
 export function App() {
   const [challenges, setChallenges] = useState<Challenge[]>([]);
   const [analytics, setAnalytics] = useState<AnalyticsSummary | null>(null);
@@ -97,7 +104,7 @@ export function App() {
   const [selectedSdg, setSelectedSdg] = useState<string>('All');
   const [minimumBounty, setMinimumBounty] = useState<string>('');
   const [sortBy, setSortBy] = useState<'upvotes' | 'bounty' | 'urgency' | 'newest' | 'solutions' | 'population'>('upvotes');
-  const [userRole, setUserRole] = useState<UserRole>('innovator');
+  const [userRole, setUserRole] = useState<UserRole>(readUserRole);
   const [currentTab, setCurrentTab] = useState<AppTab>('challenges');
   const [favoritesOnly, setFavoritesOnly] = useState<boolean>(false);
   const [verifiedOnly, setVerifiedOnly] = useState<boolean>(false);
@@ -162,6 +169,10 @@ export function App() {
       JSON.stringify(Object.keys(savedChallenges).filter((id) => savedChallenges[id])),
     );
   }, [savedChallenges]);
+
+  useEffect(() => {
+    localStorage.setItem('jansetu-user-role', userRole);
+  }, [userRole]);
 
   const handleShareUpdate = async () => {
     const update = {
