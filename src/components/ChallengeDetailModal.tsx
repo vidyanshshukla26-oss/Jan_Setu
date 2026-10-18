@@ -24,6 +24,7 @@ import {
   GitBranch,
   Layers,
   ChevronRight,
+  ChevronLeft,
   Share2,
 } from 'lucide-react';
 import { Challenge, Solution, UserRole } from '../types';
@@ -52,6 +53,11 @@ export const ChallengeDetailModal: React.FC<ChallengeDetailModalProps> = ({
 }) => {
   const dialogRef = useDialogAccessibility(onClose);
   const [activeTab, setActiveTab] = useState<'overview' | 'ai_triage' | 'solutions' | 'bounty' | 'discussion'>('overview');
+  const [activeEvidenceIndex, setActiveEvidenceIndex] = useState<number | null>(null);
+  const evidenceDialogRef = useDialogAccessibility(
+    () => setActiveEvidenceIndex(null),
+    activeEvidenceIndex !== null,
+  );
   const [commentText, setCommentText] = useState('');
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
   const [pledgeAmount, setPledgeAmount] = useState('100000');
@@ -309,17 +315,23 @@ export const ChallengeDetailModal: React.FC<ChallengeDetailModalProps> = ({
                 </h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {challenge.evidenceImages.map((img, idx) => (
-                    <div key={idx} className="relative rounded-xl overflow-hidden border border-slate-200 h-52 group">
+                    <button
+                      key={`${img}-${idx}`}
+                      type="button"
+                      onClick={() => setActiveEvidenceIndex(idx)}
+                      aria-label={`Enlarge field evidence image ${idx + 1} of ${challenge.evidenceImages.length}`}
+                      className="relative h-52 overflow-hidden rounded-xl border border-slate-200 text-left group"
+                    >
                       <img
                         src={img}
-                        alt={`Evidence ${idx + 1}`}
+                        alt={`Field evidence ${idx + 1} for ${challenge.title}`}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         referrerPolicy="no-referrer"
                       />
-                      <div className="absolute bottom-2 left-2 px-2 py-1 bg-slate-900/80 text-white text-[10px] rounded-md font-semibold">
-                        Field Evidence #{idx + 1}
-                      </div>
-                    </div>
+                      <span className="absolute bottom-2 left-2 rounded-md bg-slate-900/80 px-2 py-1 text-[10px] font-semibold text-white">
+                        View field evidence #{idx + 1}
+                      </span>
+                    </button>
                   ))}
                 </div>
               </div>
@@ -834,6 +846,74 @@ export const ChallengeDetailModal: React.FC<ChallengeDetailModalProps> = ({
           </div>
         </div>
       </div>
+      {activeEvidenceIndex !== null && challenge.evidenceImages[activeEvidenceIndex] && (
+        <div
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-950/90 p-4 sm:p-8"
+          onClick={(event) => {
+            if (event.target === event.currentTarget) setActiveEvidenceIndex(null);
+          }}
+        >
+          <div
+            ref={evidenceDialogRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="evidence-preview-title"
+            tabIndex={-1}
+            onKeyDown={(event) => {
+              if (event.key === 'ArrowLeft' && challenge.evidenceImages.length > 1) {
+                event.preventDefault();
+                setActiveEvidenceIndex((activeEvidenceIndex - 1 + challenge.evidenceImages.length) % challenge.evidenceImages.length);
+              } else if (event.key === 'ArrowRight' && challenge.evidenceImages.length > 1) {
+                event.preventDefault();
+                setActiveEvidenceIndex((activeEvidenceIndex + 1) % challenge.evidenceImages.length);
+              }
+            }}
+            className="relative flex max-h-full w-full max-w-5xl flex-col items-center gap-3"
+          >
+            <h3 id="evidence-preview-title" className="sr-only">
+              Field evidence {activeEvidenceIndex + 1} of {challenge.evidenceImages.length} for {challenge.title}
+            </h3>
+            <img
+              src={challenge.evidenceImages[activeEvidenceIndex]}
+              alt={`Field evidence ${activeEvidenceIndex + 1} for ${challenge.title}`}
+              className="max-h-[78vh] max-w-full rounded-xl object-contain"
+              referrerPolicy="no-referrer"
+            />
+            <p aria-live="polite" className="text-sm font-medium text-white">
+              Field evidence {activeEvidenceIndex + 1} of {challenge.evidenceImages.length}
+            </p>
+            <button
+              type="button"
+              data-dialog-initial-focus
+              onClick={() => setActiveEvidenceIndex(null)}
+              aria-label="Close evidence preview"
+              className="absolute -right-1 -top-1 rounded-full bg-white p-2 text-slate-900 shadow-lg sm:-right-3 sm:-top-3"
+            >
+              <X className="h-5 w-5" />
+            </button>
+            {challenge.evidenceImages.length > 1 && (
+              <>
+                <button
+                  type="button"
+                  onClick={() => setActiveEvidenceIndex((activeEvidenceIndex - 1 + challenge.evidenceImages.length) % challenge.evidenceImages.length)}
+                  aria-label="Previous evidence image"
+                  className="absolute left-0 top-1/2 -translate-y-1/2 rounded-full bg-white p-3 text-slate-900 shadow-lg"
+                >
+                  <ChevronLeft className="h-5 w-5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveEvidenceIndex((activeEvidenceIndex + 1) % challenge.evidenceImages.length)}
+                  aria-label="Next evidence image"
+                  className="absolute right-0 top-1/2 -translate-y-1/2 rounded-full bg-white p-3 text-slate-900 shadow-lg"
+                >
+                  <ChevronRight className="h-5 w-5" />
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

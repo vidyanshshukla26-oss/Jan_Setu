@@ -1,13 +1,13 @@
 import { useEffect, useRef } from 'react';
 
-export function useDialogAccessibility(onClose: () => void) {
+export function useDialogAccessibility(onClose: () => void, enabled = true) {
   const dialogRef = useRef<HTMLDivElement>(null);
   const onCloseRef = useRef(onClose);
   onCloseRef.current = onClose;
 
   useEffect(() => {
     const dialog = dialogRef.current;
-    if (!dialog) return;
+    if (!enabled || !dialog) return;
 
     const previousFocus = document.activeElement instanceof HTMLElement
       ? document.activeElement
@@ -25,6 +25,7 @@ export function useDialogAccessibility(onClose: () => void) {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         event.preventDefault();
+        event.stopPropagation();
         onCloseRef.current();
         return;
       }
@@ -53,7 +54,7 @@ export function useDialogAccessibility(onClose: () => void) {
       dialog.removeEventListener('keydown', handleKeyDown);
       previousFocus?.focus();
     };
-  }, []);
+  }, [enabled]);
 
   return dialogRef;
 }
