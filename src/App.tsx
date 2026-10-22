@@ -33,6 +33,7 @@ import {
   Type,
   X,
   Download,
+  Share2,
 } from 'lucide-react';
 import { Challenge, Solution, UserRole, AnalyticsSummary, ChallengeCategory, AppTab } from './types';
 import { Navbar } from './components/Navbar';
@@ -62,6 +63,17 @@ const CATEGORIES: ChallengeCategory[] = [
 const SAVED_CHALLENGES_KEY = 'jansetu-saved-challenges';
 const RECENT_CHALLENGES_KEY = 'jansetu-recent-challenges';
 const CHALLENGES_PER_PAGE = 9;
+const SORT_OPTIONS = ['upvotes', 'bounty', 'urgency', 'newest', 'solutions', 'population'] as const;
+type ChallengeSort = typeof SORT_OPTIONS[number];
+
+function readFilterParameter(name: string): string {
+  return new URLSearchParams(window.location.search).get(name) || 'All';
+}
+
+function readSortParameter(): ChallengeSort {
+  const sortBy = new URLSearchParams(window.location.search).get('sort');
+  return SORT_OPTIONS.find((option) => option === sortBy) || 'upvotes';
+}
 
 function readSavedChallenges(): Record<string, boolean> {
   try {
@@ -109,21 +121,27 @@ export function App() {
   const [largerText, setLargerText] = useState<boolean>(
     () => localStorage.getItem('jansetu-larger-text') === 'true',
   );
-  const [searchQuery, setSearchQuery] = useState<string>('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('All');
-  const [selectedSeverity, setSelectedSeverity] = useState<string>('All');
-  const [selectedStatus, setSelectedStatus] = useState<string>('All');
-  const [selectedCity, setSelectedCity] = useState<string>('All');
-  const [selectedState, setSelectedState] = useState<string>('All');
-  const [selectedSdg, setSelectedSdg] = useState<string>('All');
-  const [minimumBounty, setMinimumBounty] = useState<string>('');
-  const [sortBy, setSortBy] = useState<'upvotes' | 'bounty' | 'urgency' | 'newest' | 'solutions' | 'population'>('upvotes');
+  const [searchQuery, setSearchQuery] = useState<string>(() => {
+    const value = new URLSearchParams(window.location.search).get('q');
+    return value || '';
+  });
+  const [selectedCategory, setSelectedCategory] = useState<string>(() => readFilterParameter('category'));
+  const [selectedSeverity, setSelectedSeverity] = useState<string>(() => readFilterParameter('severity'));
+  const [selectedStatus, setSelectedStatus] = useState<string>(() => readFilterParameter('status'));
+  const [selectedCity, setSelectedCity] = useState<string>(() => readFilterParameter('city'));
+  const [selectedState, setSelectedState] = useState<string>(() => readFilterParameter('state'));
+  const [selectedSdg, setSelectedSdg] = useState<string>(() => readFilterParameter('sdg'));
+  const [minimumBounty, setMinimumBounty] = useState<string>(() => {
+    const value = new URLSearchParams(window.location.search).get('minBounty');
+    return value || '';
+  });
+  const [sortBy, setSortBy] = useState<ChallengeSort>(readSortParameter);
   const [userRole, setUserRole] = useState<UserRole>(readUserRole);
   const [currentTab, setCurrentTab] = useState<AppTab>('challenges');
-  const [favoritesOnly, setFavoritesOnly] = useState<boolean>(false);
-  const [verifiedOnly, setVerifiedOnly] = useState<boolean>(false);
-  const [showHighPriority, setShowHighPriority] = useState<boolean>(false);
-  const [hasSolutionsOnly, setHasSolutionsOnly] = useState<boolean>(false);
+  const [favoritesOnly, setFavoritesOnly] = useState<boolean>(() => new URLSearchParams(window.location.search).get('saved') === 'true');
+  const [verifiedOnly, setVerifiedOnly] = useState<boolean>(() => new URLSearchParams(window.location.search).get('verified') === 'true');
+  const [showHighPriority, setShowHighPriority] = useState<boolean>(() => new URLSearchParams(window.location.search).get('priority') === 'true');
+  const [hasSolutionsOnly, setHasSolutionsOnly] = useState<boolean>(() => new URLSearchParams(window.location.search).get('solutions') === 'true');
   const [visibleChallengeCount, setVisibleChallengeCount] = useState<number>(CHALLENGES_PER_PAGE);
   const [savedChallenges, setSavedChallenges] = useState<Record<string, boolean>>(readSavedChallenges);
   const [recentChallengeIds, setRecentChallengeIds] = useState<string[]>(readRecentChallenges);
@@ -210,6 +228,44 @@ export function App() {
     localStorage.setItem('jansetu-user-role', userRole);
   }, [userRole]);
 
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    const filters: Record<string, string> = {
+      q: searchQuery,
+      category: selectedCategory === 'All' ? '' : selectedCategory,
+      severity: selectedSeverity === 'All' ? '' : selectedSeverity,
+      status: selectedStatus === 'All' ? '' : selectedStatus,
+      city: selectedCity === 'All' ? '' : selectedCity,
+      state: selectedState === 'All' ? '' : selectedState,
+      sdg: selectedSdg === 'All' ? '' : selectedSdg,
+      minBounty: minimumBounty,
+      sort: sortBy === 'upvotes' ? '' : sortBy,
+      saved: favoritesOnly ? 'true' : '',
+      verified: verifiedOnly ? 'true' : '',
+      priority: showHighPriority ? 'true' : '',
+      solutions: hasSolutionsOnly ? 'true' : '',
+    };
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value) url.searchParams.set(key, value);
+      else url.searchParams.delete(key);
+    });
+    window.history.replaceState(null, '', url);
+  }, [
+    searchQuery,
+    selectedCategory,
+    selectedSeverity,
+    selectedStatus,
+    selectedCity,
+    selectedState,
+    selectedSdg,
+    minimumBounty,
+    sortBy,
+    favoritesOnly,
+    verifiedOnly,
+    showHighPriority,
+    hasSolutionsOnly,
+  ]);
+
   const handleShareUpdate = async () => {
     const update = {
       title: 'Jan Setu civic operations update',
@@ -227,6 +283,23 @@ export function App() {
       if (err instanceof DOMException && err.name === 'AbortError') return;
       console.error('Share update error:', err);
       setShareStatus('Could not share the update. Please try again.');
+    }
+  };
+
+  const handleShareView = async () => {
+    const url = window.location.href;
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: 'Jan Setu challenge view', url });
+        setShareStatus('Challenge view shared.');
+      } else {
+        await navigator.clipboard.writeText(url);
+        setShareStatus('Challenge view link copied.');
+      }
+    } catch (err) {
+      if (err instanceof DOMException && err.name === 'AbortError') return;
+      console.error('Share challenge view error:', err);
+      setShareStatus('Could not share the challenge view. Please try again.');
     }
   };
 
@@ -495,6 +568,14 @@ export function App() {
                   Export CSV
                 </button>
                 <button
+                  type="button"
+                  onClick={handleShareView}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3.5 py-1.5 text-xs font-semibold text-gray-700 shadow-2xs transition-all hover:bg-gray-50"
+                >
+                  <Share2 className="h-3.5 w-3.5" />
+                  Share view
+                </button>
+                <button
                   onClick={() => {
                     setSelectedCategory('All');
                     setSelectedSeverity('All');
@@ -524,6 +605,11 @@ export function App() {
                   <span>+ New Challenge</span>
                 </button>
               </div>
+              {shareStatus && (
+                <p role="status" aria-live="polite" className="text-xs text-gray-600">
+                  {shareStatus}
+                </p>
+              )}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
