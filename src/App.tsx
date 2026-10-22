@@ -450,20 +450,46 @@ export function App() {
   };
 
   const exportFilteredChallenges = () => {
-    const columns = ['ID', 'Title', 'Category', 'Urgency', 'Status', 'City', 'State', 'SDG', 'Upvotes', 'Grant (INR)', 'Solutions'];
-    const escapeCsv = (value: string | number) => `"${String(value).replaceAll('"', '""')}"`;
+    const columns = [
+      'ID',
+      'Title',
+      'Category',
+      'Urgency',
+      'Severity Score',
+      'Status',
+      'City',
+      'State',
+      'SDG',
+      'Reported Date',
+      'Reported By',
+      'Impacted Population',
+      'Upvotes',
+      'Grant (INR)',
+      'Solutions',
+      'Technology Disciplines',
+      'Sponsors',
+      'Officially Verified',
+    ];
+    const escapeCsv = (value: string | number | boolean) => `"${String(value).replaceAll('"', '""')}"`;
     const rows = filteredChallenges.map((challenge) => [
       challenge.id,
       challenge.title,
       challenge.category,
       challenge.severity,
+      challenge.severityScore,
       challenge.status,
       challenge.location.city,
       challenge.location.state,
       challenge.sdgNumber,
+      challenge.reportedDate,
+      [challenge.reportedBy.name, challenge.reportedBy.organization].filter(Boolean).join(' — '),
+      challenge.impactedPopulation,
       challenge.upvotes,
       challenge.bountyAmount,
       challenge.solutionsCount,
+      challenge.primaryTechDisciplines.join('; '),
+      challenge.sponsors.map((sponsor) => sponsor.name).join('; '),
+      challenge.verifiedByOfficial,
     ]);
     const csv = [columns, ...rows].map((row) => row.map(escapeCsv).join(',')).join('\r\n');
     const blob = new Blob([`\uFEFF${csv}`], { type: 'text/csv;charset=utf-8' });
