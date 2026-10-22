@@ -60,6 +60,7 @@ const CATEGORIES: ChallengeCategory[] = [
 ];
 
 const SAVED_CHALLENGES_KEY = 'jansetu-saved-challenges';
+const RECENT_CHALLENGES_KEY = 'jansetu-recent-challenges';
 
 function readSavedChallenges(): Record<string, boolean> {
   try {
@@ -69,6 +70,17 @@ function readSavedChallenges(): Record<string, boolean> {
   } catch (error) {
     console.warn('Could not restore saved challenges:', error);
     return {};
+  }
+}
+
+function readRecentChallenges(): string[] {
+  try {
+    const recentIds: unknown = JSON.parse(localStorage.getItem(RECENT_CHALLENGES_KEY) || '[]');
+    if (!Array.isArray(recentIds)) return [];
+    return recentIds.filter((id): id is string => typeof id === 'string').slice(0, 5);
+  } catch (error) {
+    console.warn('Could not restore recently viewed challenges:', error);
+    return [];
   }
 }
 
@@ -112,6 +124,7 @@ export function App() {
   const [showHighPriority, setShowHighPriority] = useState<boolean>(false);
   const [hasSolutionsOnly, setHasSolutionsOnly] = useState<boolean>(false);
   const [savedChallenges, setSavedChallenges] = useState<Record<string, boolean>>(readSavedChallenges);
+  const [recentChallengeIds, setRecentChallengeIds] = useState<string[]>(readRecentChallenges);
   const [votingChallenges, setVotingChallenges] = useState<Record<string, boolean>>({});
 
   // Modal States
@@ -124,6 +137,14 @@ export function App() {
   // Proposal pre-fill state
   const [proposalTargetChallenge, setProposalTargetChallenge] = useState<Challenge | null>(null);
   const [proposalTargetSolution, setProposalTargetSolution] = useState<Solution | null>(null);
+
+  const handleSelectChallenge = (challenge: Challenge) => {
+    setSelectedChallenge(challenge);
+    setRecentChallengeIds((previous) => [
+      challenge.id,
+      ...previous.filter((id) => id !== challenge.id),
+    ].slice(0, 5));
+  };
 
   // Fetch challenges & analytics from backend
   const fetchData = async () => {
@@ -145,7 +166,7 @@ export function App() {
         const linkedChallengeId = new URLSearchParams(window.location.search).get('challenge');
         if (linkedChallengeId) {
           const linkedChallenge = chData.data.find((challenge: Challenge) => challenge.id === linkedChallengeId);
-          if (linkedChallenge) setSelectedChallenge(linkedChallenge);
+          if (linkedChallenge) handleSelectChallenge(linkedChallenge);
         }
       } else {
         throw new Error('Challenge response did not contain a valid data list');
@@ -178,6 +199,10 @@ export function App() {
       JSON.stringify(Object.keys(savedChallenges).filter((id) => savedChallenges[id])),
     );
   }, [savedChallenges]);
+
+  useEffect(() => {
+    localStorage.setItem(RECENT_CHALLENGES_KEY, JSON.stringify(recentChallengeIds));
+  }, [recentChallengeIds]);
 
   useEffect(() => {
     localStorage.setItem('jansetu-user-role', userRole);
@@ -716,6 +741,31 @@ export function App() {
                 </div>
               )}
 
+              {recentChallengeIds.length > 0 && (
+                <div aria-label="Recently viewed challenges" className="flex flex-wrap items-center gap-1.5">
+                  <span className="text-[11px] font-semibold text-gray-500">Recently viewed:</span>
+                  {recentChallengeIds.map((id) => challenges.find((challenge) => challenge.id === id)).filter(
+                    (challenge): challenge is Challenge => Boolean(challenge),
+                  ).map((challenge) => (
+                    <button
+                      key={challenge.id}
+                      type="button"
+                      onClick={() => handleSelectChallenge(challenge)}
+                      className="max-w-56 truncate rounded-full border border-gray-200 bg-gray-50 px-2.5 py-1 text-[11px] font-medium text-gray-700 hover:bg-gray-100"
+                    >
+                      {challenge.title}
+                    </button>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => setRecentChallengeIds([])}
+                    className="rounded-full px-2 py-1 text-[11px] font-medium text-gray-500 underline underline-offset-2 hover:text-gray-800"
+                  >
+                    Clear
+                  </button>
+                </div>
+              )}
+
               {/* Category Filter Chips */}
               <div role="group" aria-label="Filter challenges by category" className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
                 <button
@@ -869,7 +919,7 @@ export function App() {
                     <ChallengeCard
                       challenge={challenge}
                       isVoting={Boolean(votingChallenges[challenge.id])}
-                      onSelect={(ch) => setSelectedChallenge(ch)}
+                      onSelect={handleSelectChallenge}
                       onVote={handleVoteChallenge}
                     />
                   </div>
@@ -950,7 +1000,7 @@ export function App() {
         {currentTab === 'map' && (
           <GeoSpatialMap
             challenges={challenges}
-            onSelectChallenge={(ch) => setSelectedChallenge(ch)}
+            onSelectChallenge={handleSelectChallenge}
           />
         )}
 
@@ -958,7 +1008,7 @@ export function App() {
         {currentTab === 'bounties' && (
           <BountiesSection
             challenges={challenges}
-            onSelectChallenge={(ch) => setSelectedChallenge(ch)}
+            onSelectChallenge={handleSelectChallenge}
           />
         )}
 
