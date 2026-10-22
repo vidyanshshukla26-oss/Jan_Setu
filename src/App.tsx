@@ -276,6 +276,7 @@ export function App() {
       if (hasSolutionsOnly && c.solutionsCount === 0) return false;
       if (searchQuery.trim()) {
         const searchableFields = [
+          c.id,
           c.title,
           c.description,
           c.location.city,
@@ -283,6 +284,8 @@ export function App() {
           c.category,
           c.sdgName,
           c.reportedBy.name,
+          c.reportedBy.organization || '',
+          c.officialVerifierName || '',
           ...c.primaryTechDisciplines,
           ...c.solutions.map((solution) => solution.title),
           ...c.solutions.map((solution) => solution.teamName),
@@ -538,10 +541,10 @@ export function App() {
                   <Search className="w-3.5 h-3.5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
                   <input
                     type="text"
-                    aria-label="Search challenges by keywords, city, state, or technology"
+                    aria-label="Search challenges by ID, keywords, location, organization, or technology"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search by keywords, city, state, or tech..."
+                    placeholder="Search ID, keywords, location, org, or technology..."
                     className="w-full pl-8 pr-3 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-xs text-gray-900 focus:bg-white focus:ring-1 focus:ring-blue-600 focus:outline-hidden"
                   />
                   {searchQuery && (
