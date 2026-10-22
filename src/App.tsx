@@ -61,6 +61,7 @@ const CATEGORIES: ChallengeCategory[] = [
 
 const SAVED_CHALLENGES_KEY = 'jansetu-saved-challenges';
 const RECENT_CHALLENGES_KEY = 'jansetu-recent-challenges';
+const CHALLENGES_PER_PAGE = 9;
 
 function readSavedChallenges(): Record<string, boolean> {
   try {
@@ -123,6 +124,7 @@ export function App() {
   const [verifiedOnly, setVerifiedOnly] = useState<boolean>(false);
   const [showHighPriority, setShowHighPriority] = useState<boolean>(false);
   const [hasSolutionsOnly, setHasSolutionsOnly] = useState<boolean>(false);
+  const [visibleChallengeCount, setVisibleChallengeCount] = useState<number>(CHALLENGES_PER_PAGE);
   const [savedChallenges, setSavedChallenges] = useState<Record<string, boolean>>(readSavedChallenges);
   const [recentChallengeIds, setRecentChallengeIds] = useState<string[]>(readRecentChallenges);
   const [votingChallenges, setVotingChallenges] = useState<Record<string, boolean>>({});
@@ -334,6 +336,26 @@ export function App() {
       }
       return 0;
     });
+
+  useEffect(() => {
+    setVisibleChallengeCount(CHALLENGES_PER_PAGE);
+  }, [
+    searchQuery,
+    selectedCategory,
+    selectedSeverity,
+    selectedStatus,
+    selectedCity,
+    selectedState,
+    selectedSdg,
+    minimumBounty,
+    sortBy,
+    favoritesOnly,
+    verifiedOnly,
+    showHighPriority,
+    hasSolutionsOnly,
+  ]);
+
+  const displayedChallenges = filteredChallenges.slice(0, visibleChallengeCount);
 
   const handleOpenSubmitSolution = (challenge: Challenge) => {
     setTargetChallengeForSolution(challenge);
@@ -854,7 +876,7 @@ export function App() {
             {/* Challenge Cards Grid */}
             {!loading && !loadError && (
               <p className="text-xs font-semibold text-gray-600" aria-live="polite">
-                Showing {filteredChallenges.length} of {challenges.length} challenges
+                Showing {displayedChallenges.length} of {filteredChallenges.length} matching challenges
               </p>
             )}
             <p role="status" aria-live="polite" className="sr-only">
@@ -903,7 +925,7 @@ export function App() {
               </div>
             ) : (
               <div aria-label={`${filteredChallenges.length} challenges`} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {filteredChallenges.map((challenge) => (
+                {displayedChallenges.map((challenge) => (
                   <div key={challenge.id} className="relative">
                     <button
                       onClick={(event) => {
@@ -948,6 +970,17 @@ export function App() {
                   <div className="absolute -bottom-10 -right-10 w-36 h-36 bg-blue-500 rounded-full opacity-30 pointer-events-none" />
                   <div className="absolute top-3 right-3 w-10 h-10 border border-blue-400 rounded-full opacity-30 pointer-events-none" />
                 </div>
+              </div>
+            )}
+            {!loading && !loadError && displayedChallenges.length < filteredChallenges.length && (
+              <div className="flex justify-center">
+                <button
+                  type="button"
+                  onClick={() => setVisibleChallengeCount((count) => count + CHALLENGES_PER_PAGE)}
+                  className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-xs font-semibold text-gray-700 shadow-2xs transition-colors hover:bg-gray-50"
+                >
+                  Load {Math.min(CHALLENGES_PER_PAGE, filteredChallenges.length - displayedChallenges.length)} more challenges
+                </button>
               </div>
             )}
 
