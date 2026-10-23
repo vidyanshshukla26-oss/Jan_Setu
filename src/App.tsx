@@ -63,7 +63,7 @@ const CATEGORIES: ChallengeCategory[] = [
 const SAVED_CHALLENGES_KEY = 'jansetu-saved-challenges';
 const RECENT_CHALLENGES_KEY = 'jansetu-recent-challenges';
 const CHALLENGES_PER_PAGE = 9;
-const SORT_OPTIONS = ['upvotes', 'bounty', 'urgency', 'newest', 'oldest', 'solutions', 'population'] as const;
+const SORT_OPTIONS = ['upvotes', 'bounty', 'urgency', 'newest', 'oldest', 'solutions', 'population', 'title'] as const;
 type ChallengeSort = typeof SORT_OPTIONS[number];
 
 function readFilterParameter(name: string): string {
@@ -410,6 +410,7 @@ export function App() {
       if (sortBy === 'oldest') {
         return new Date(a.reportedDate).getTime() - new Date(b.reportedDate).getTime();
       }
+      if (sortBy === 'title') return a.title.localeCompare(b.title);
       return 0;
     });
 
@@ -810,6 +811,7 @@ export function App() {
                       <option value="population">Most Citizens Impacted</option>
                       <option value="newest">Recently Reported</option>
                       <option value="oldest">Oldest Reports First</option>
+                      <option value="title">Title (A–Z)</option>
                     </select>
                   </div>
                 </div>
