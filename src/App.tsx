@@ -151,6 +151,7 @@ export function App() {
   const [showHighPriority, setShowHighPriority] = useState<boolean>(() => new URLSearchParams(window.location.search).get('priority') === 'true');
   const [hasSolutionsOnly, setHasSolutionsOnly] = useState<boolean>(() => new URLSearchParams(window.location.search).get('solutions') === 'true');
   const [fundedOnly, setFundedOnly] = useState<boolean>(() => new URLSearchParams(window.location.search).get('funded') === 'true');
+  const [hasEvidenceOnly, setHasEvidenceOnly] = useState<boolean>(() => new URLSearchParams(window.location.search).get('evidence') === 'true');
   const [visibleChallengeCount, setVisibleChallengeCount] = useState<number>(CHALLENGES_PER_PAGE);
   const [savedChallenges, setSavedChallenges] = useState<Record<string, boolean>>(readSavedChallenges);
   const [recentChallengeIds, setRecentChallengeIds] = useState<string[]>(readRecentChallenges);
@@ -256,6 +257,7 @@ export function App() {
       priority: showHighPriority ? 'true' : '',
       solutions: hasSolutionsOnly ? 'true' : '',
       funded: fundedOnly ? 'true' : '',
+      evidence: hasEvidenceOnly ? 'true' : '',
     };
     Object.entries(filters).forEach(([key, value]) => {
       if (value) url.searchParams.set(key, value);
@@ -279,6 +281,7 @@ export function App() {
     showHighPriority,
     hasSolutionsOnly,
     fundedOnly,
+    hasEvidenceOnly,
   ]);
 
   const handleShareUpdate = async () => {
@@ -392,6 +395,7 @@ export function App() {
       if (showHighPriority && c.severity !== 'Critical' && c.severity !== 'High') return false;
       if (hasSolutionsOnly && c.solutionsCount === 0) return false;
       if (fundedOnly && c.bountyAmount <= 0) return false;
+      if (hasEvidenceOnly && c.evidenceImages.length === 0) return false;
       if (searchQuery.trim()) {
         const searchableFields = [
           c.id,
@@ -451,6 +455,7 @@ export function App() {
     showHighPriority,
     hasSolutionsOnly,
     fundedOnly,
+    hasEvidenceOnly,
   ]);
 
   const displayedChallenges = filteredChallenges.slice(0, visibleChallengeCount);
@@ -544,6 +549,7 @@ export function App() {
     ...(showHighPriority ? [{ label: 'High priority', clear: () => setShowHighPriority(false) }] : []),
     ...(hasSolutionsOnly ? [{ label: 'Has solutions', clear: () => setHasSolutionsOnly(false) }] : []),
     ...(fundedOnly ? [{ label: 'Funded only', clear: () => setFundedOnly(false) }] : []),
+    ...(hasEvidenceOnly ? [{ label: 'With evidence', clear: () => setHasEvidenceOnly(false) }] : []),
   ];
   const availableCities = Array.from(new Set<string>(challenges.map((challenge) => challenge.location.city)))
     .sort((a, b) => a.localeCompare(b));
@@ -647,6 +653,7 @@ export function App() {
                     setShowHighPriority(false);
                     setHasSolutionsOnly(false);
                     setFundedOnly(false);
+                    setHasEvidenceOnly(false);
                   }}
                   aria-label="Reset all challenge filters and sorting"
                   className="px-3.5 py-1.5 bg-white border border-gray-200 rounded-lg text-xs font-semibold text-gray-700 hover:bg-gray-50 shadow-2xs transition-all cursor-pointer"
@@ -915,6 +922,15 @@ export function App() {
                   <HandCoins className="w-3.5 h-3.5" />
                   Funded only
                 </button>
+                <button
+                  type="button"
+                  onClick={() => setHasEvidenceOnly((value) => !value)}
+                  aria-pressed={hasEvidenceOnly}
+                  className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-semibold ${hasEvidenceOnly ? 'bg-cyan-100 text-cyan-800 border border-cyan-200' : 'bg-gray-100 text-gray-700 border border-gray-200'} transition-colors`}
+                >
+                  <Layers className="w-3.5 h-3.5" />
+                  With evidence
+                </button>
                 <div aria-live="polite" className="ml-auto inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-gray-50 px-2.5 py-1.5 text-[11px] font-semibold text-gray-700">
                   <Star className="w-3.5 h-3.5 text-amber-500" />
                   {savedChallengeCount} saved
@@ -1102,6 +1118,7 @@ export function App() {
                     setShowHighPriority(false);
                     setHasSolutionsOnly(false);
                     setFundedOnly(false);
+                    setHasEvidenceOnly(false);
                     setSortBy('upvotes');
                   }}
                   className="px-4 py-2 bg-gray-900 text-white text-xs font-semibold rounded-lg hover:bg-black"
