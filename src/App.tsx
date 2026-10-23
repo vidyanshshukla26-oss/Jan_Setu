@@ -152,6 +152,7 @@ export function App() {
   const [hasSolutionsOnly, setHasSolutionsOnly] = useState<boolean>(() => new URLSearchParams(window.location.search).get('solutions') === 'true');
   const [fundedOnly, setFundedOnly] = useState<boolean>(() => new URLSearchParams(window.location.search).get('funded') === 'true');
   const [hasEvidenceOnly, setHasEvidenceOnly] = useState<boolean>(() => new URLSearchParams(window.location.search).get('evidence') === 'true');
+  const [aiAnalyzedOnly, setAiAnalyzedOnly] = useState<boolean>(() => new URLSearchParams(window.location.search).get('aiAnalyzed') === 'true');
   const [visibleChallengeCount, setVisibleChallengeCount] = useState<number>(CHALLENGES_PER_PAGE);
   const [savedChallenges, setSavedChallenges] = useState<Record<string, boolean>>(readSavedChallenges);
   const [recentChallengeIds, setRecentChallengeIds] = useState<string[]>(readRecentChallenges);
@@ -258,6 +259,7 @@ export function App() {
       solutions: hasSolutionsOnly ? 'true' : '',
       funded: fundedOnly ? 'true' : '',
       evidence: hasEvidenceOnly ? 'true' : '',
+      aiAnalyzed: aiAnalyzedOnly ? 'true' : '',
     };
     Object.entries(filters).forEach(([key, value]) => {
       if (value) url.searchParams.set(key, value);
@@ -282,6 +284,7 @@ export function App() {
     hasSolutionsOnly,
     fundedOnly,
     hasEvidenceOnly,
+    aiAnalyzedOnly,
   ]);
 
   const handleShareUpdate = async () => {
@@ -396,6 +399,7 @@ export function App() {
       if (hasSolutionsOnly && c.solutionsCount === 0) return false;
       if (fundedOnly && c.bountyAmount <= 0) return false;
       if (hasEvidenceOnly && c.evidenceImages.length === 0) return false;
+      if (aiAnalyzedOnly && !c.aiAnalysis) return false;
       if (searchQuery.trim()) {
         const searchableFields = [
           c.id,
@@ -456,6 +460,7 @@ export function App() {
     hasSolutionsOnly,
     fundedOnly,
     hasEvidenceOnly,
+    aiAnalyzedOnly,
   ]);
 
   const displayedChallenges = filteredChallenges.slice(0, visibleChallengeCount);
@@ -550,6 +555,7 @@ export function App() {
     ...(hasSolutionsOnly ? [{ label: 'Has solutions', clear: () => setHasSolutionsOnly(false) }] : []),
     ...(fundedOnly ? [{ label: 'Funded only', clear: () => setFundedOnly(false) }] : []),
     ...(hasEvidenceOnly ? [{ label: 'With evidence', clear: () => setHasEvidenceOnly(false) }] : []),
+    ...(aiAnalyzedOnly ? [{ label: 'AI triage available', clear: () => setAiAnalyzedOnly(false) }] : []),
   ];
   const availableCities = Array.from(new Set<string>(challenges.map((challenge) => challenge.location.city)))
     .sort((a, b) => a.localeCompare(b));
@@ -654,6 +660,7 @@ export function App() {
                     setHasSolutionsOnly(false);
                     setFundedOnly(false);
                     setHasEvidenceOnly(false);
+                    setAiAnalyzedOnly(false);
                   }}
                   aria-label="Reset all challenge filters and sorting"
                   className="px-3.5 py-1.5 bg-white border border-gray-200 rounded-lg text-xs font-semibold text-gray-700 hover:bg-gray-50 shadow-2xs transition-all cursor-pointer"
@@ -931,6 +938,15 @@ export function App() {
                   <Layers className="w-3.5 h-3.5" />
                   With evidence
                 </button>
+                <button
+                  type="button"
+                  onClick={() => setAiAnalyzedOnly((value) => !value)}
+                  aria-pressed={aiAnalyzedOnly}
+                  className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-semibold ${aiAnalyzedOnly ? 'bg-violet-100 text-violet-800 border border-violet-200' : 'bg-gray-100 text-gray-700 border border-gray-200'} transition-colors`}
+                >
+                  <Sparkles className="w-3.5 h-3.5" />
+                  AI triage
+                </button>
                 <div aria-live="polite" className="ml-auto inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-gray-50 px-2.5 py-1.5 text-[11px] font-semibold text-gray-700">
                   <Star className="w-3.5 h-3.5 text-amber-500" />
                   {savedChallengeCount} saved
@@ -1119,6 +1135,7 @@ export function App() {
                     setHasSolutionsOnly(false);
                     setFundedOnly(false);
                     setHasEvidenceOnly(false);
+                    setAiAnalyzedOnly(false);
                     setSortBy('upvotes');
                   }}
                   className="px-4 py-2 bg-gray-900 text-white text-xs font-semibold rounded-lg hover:bg-black"
