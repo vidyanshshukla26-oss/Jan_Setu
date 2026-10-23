@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Sparkles,
   PlusCircle,
@@ -113,6 +113,7 @@ function readUserRole(): UserRole {
 }
 
 export function App() {
+  const challengeSearchRef = useRef<HTMLInputElement>(null);
   const [challenges, setChallenges] = useState<Challenge[]>([]);
   const [analytics, setAnalytics] = useState<AnalyticsSummary | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -217,6 +218,28 @@ export function App() {
 
   useEffect(() => {
     fetchData();
+  }, []);
+
+  useEffect(() => {
+    const handleSearchShortcut = (event: KeyboardEvent) => {
+      if (
+        event.key !== '/' ||
+        event.altKey ||
+        event.ctrlKey ||
+        event.metaKey ||
+        event.target instanceof HTMLInputElement ||
+        event.target instanceof HTMLTextAreaElement ||
+        event.target instanceof HTMLSelectElement ||
+        (event.target instanceof HTMLElement && event.target.isContentEditable)
+      ) {
+        return;
+      }
+      event.preventDefault();
+      setCurrentTab('challenges');
+      challengeSearchRef.current?.focus();
+    };
+    window.addEventListener('keydown', handleSearchShortcut);
+    return () => window.removeEventListener('keydown', handleSearchShortcut);
   }, []);
 
   useEffect(() => {
@@ -765,11 +788,12 @@ export function App() {
                 <div className="relative w-full sm:w-80">
                   <Search className="w-3.5 h-3.5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
                   <input
+                    ref={challengeSearchRef}
                     type="text"
                     aria-label="Search challenges by ID, keywords, location, organization, or technology"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search ID, keywords, location, org, or technology..."
+                    placeholder="Search ID, location, org, or technology (press / to focus)..."
                     className="w-full pl-8 pr-3 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-xs text-gray-900 focus:bg-white focus:ring-1 focus:ring-blue-600 focus:outline-hidden"
                   />
                   {searchQuery && (
