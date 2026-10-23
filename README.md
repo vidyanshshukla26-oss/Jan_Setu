@@ -17,6 +17,9 @@
 - **💬 JanSetu AI Civic Assistant** — A chatbot that helps citizens, student innovators, and officials navigate the platform.
 - **👥 Community Engagement** — Upvoting on challenges and solutions, commenting, and solution endorsements.
 - **🔥 Impact Rankings** — Live rankings for civic contributors, solution teams, and the most discussed challenges.
+- **🔎 Challenge Discovery** — Filter by location, status, funding, evidence, AI triage, grant size, and affected population; sort by urgency, activity, date, or title.
+- **🔖 Saved Views & Sharing** — Save reusable filter presets, revisit recent challenges, and share direct challenge links or complete filter views.
+- **📤 Data Export** — Download filtered challenge results as CSV or JSON, with configurable result loading and compact-list display options.
 - **♿ Accessible Experience** — Keyboard-friendly navigation and dialogs, visible focus indicators, reduced-motion support, and a persistent larger-text preference.
 - **🛡️ Operational Resilience** — Retryable data loading, API validation, health telemetry, and consistent AI assistant contracts.
 
