@@ -64,17 +64,27 @@ const CATEGORIES: ChallengeCategory[] = [
 
 const SAVED_CHALLENGES_KEY = 'jansetu-saved-challenges';
 const RECENT_CHALLENGES_KEY = 'jansetu-recent-challenges';
+const FILTER_PRESETS_KEY = 'jansetu-filter-presets';
 const CHALLENGES_PER_PAGE = 9;
 const SORT_OPTIONS = ['upvotes', 'bounty', 'urgency', 'newest', 'oldest', 'solutions', 'population', 'title'] as const;
 type ChallengeSort = typeof SORT_OPTIONS[number];
+
+interface ChallengeFilterPreset {
+  id: string;
+  name: string;
+  query: string;
+}
 
 function readFilterParameter(name: string): string {
   return new URLSearchParams(window.location.search).get(name) || 'All';
 }
 
 function readSortParameter(): ChallengeSort {
-  const sortBy = new URLSearchParams(window.location.search).get('sort');
-  return SORT_OPTIONS.find((option) => option === sortBy) || 'upvotes';
+  return readSortParameterFrom(new URLSearchParams(window.location.search).get('sort'));
+}
+
+function readSortParameterFrom(value: string | null): ChallengeSort {
+  return SORT_OPTIONS.find((option) => option === value) || 'upvotes';
 }
 
 function readSavedChallenges(): Record<string, boolean> {
@@ -95,6 +105,26 @@ function readRecentChallenges(): string[] {
     return recentIds.filter((id): id is string => typeof id === 'string').slice(0, 5);
   } catch (error) {
     console.warn('Could not restore recently viewed challenges:', error);
+    return [];
+  }
+}
+
+function readFilterPresets(): ChallengeFilterPreset[] {
+  try {
+    const presets: unknown = JSON.parse(localStorage.getItem(FILTER_PRESETS_KEY) || '[]');
+    if (!Array.isArray(presets)) return [];
+    return presets.filter((preset): preset is ChallengeFilterPreset => (
+      typeof preset === 'object' &&
+      preset !== null &&
+      'id' in preset &&
+      typeof preset.id === 'string' &&
+      'name' in preset &&
+      typeof preset.name === 'string' &&
+      'query' in preset &&
+      typeof preset.query === 'string'
+    )).slice(0, 10);
+  } catch (error) {
+    console.warn('Could not restore challenge filter presets:', error);
     return [];
   }
 }
@@ -163,6 +193,9 @@ export function App() {
   const [visibleChallengeCount, setVisibleChallengeCount] = useState<number>(CHALLENGES_PER_PAGE);
   const [savedChallenges, setSavedChallenges] = useState<Record<string, boolean>>(readSavedChallenges);
   const [recentChallengeIds, setRecentChallengeIds] = useState<string[]>(readRecentChallenges);
+  const [filterPresets, setFilterPresets] = useState<ChallengeFilterPreset[]>(readFilterPresets);
+  const [presetName, setPresetName] = useState<string>('');
+  const [selectedPresetId, setSelectedPresetId] = useState<string>('');
   const [votingChallenges, setVotingChallenges] = useState<Record<string, boolean>>({});
 
   // Modal States
@@ -267,6 +300,10 @@ export function App() {
   useEffect(() => {
     localStorage.setItem(RECENT_CHALLENGES_KEY, JSON.stringify(recentChallengeIds));
   }, [recentChallengeIds]);
+
+  useEffect(() => {
+    localStorage.setItem(FILTER_PRESETS_KEY, JSON.stringify(filterPresets));
+  }, [filterPresets]);
 
   useEffect(() => {
     localStorage.setItem('jansetu-user-role', userRole);
@@ -520,6 +557,48 @@ export function App() {
       ...prev,
       [challengeId]: !prev[challengeId],
     }));
+  };
+
+  const saveCurrentFilterPreset = () => {
+    const name = presetName.trim();
+    if (!name) return;
+    const params = new URLSearchParams(window.location.search);
+    params.delete('challenge');
+    const preset: ChallengeFilterPreset = {
+      id: `${Date.now()}`,
+      name,
+      query: params.toString(),
+    };
+    setFilterPresets((previous) => [preset, ...previous].slice(0, 10));
+    setSelectedPresetId(preset.id);
+    setPresetName('');
+  };
+
+  const applyFilterPreset = (presetId: string) => {
+    const preset = filterPresets.find((item) => item.id === presetId);
+    if (!preset) return;
+    const params = new URLSearchParams(preset.query);
+    setSearchQuery(params.get('q') || '');
+    setSelectedCategory(params.get('category') || 'All');
+    setSelectedSeverity(params.get('severity') || 'All');
+    setSelectedStatus(params.get('status') || 'All');
+    setSelectedCity(params.get('city') || 'All');
+    setSelectedState(params.get('state') || 'All');
+    setSelectedSdg(params.get('sdg') || 'All');
+    setMinimumBounty(params.get('minBounty') || '');
+    setMinimumPopulation(params.get('minPopulation') || '');
+    setMaximumPopulation(params.get('maxPopulation') || '');
+    setSortBy(readSortParameterFrom(params.get('sort')));
+    setFavoritesOnly(params.get('saved') === 'true');
+    setVerifiedOnly(params.get('verified') === 'true');
+    setShowHighPriority(params.get('priority') === 'true');
+    setHasSolutionsOnly(params.get('solutions') === 'true');
+    setFundedOnly(params.get('funded') === 'true');
+    setHasEvidenceOnly(params.get('evidence') === 'true');
+    setAiAnalyzedOnly(params.get('aiAnalyzed') === 'true');
+    setSelectedPresetId(presetId);
+    setCurrentTab('challenges');
+    setSelectedChallenge(null);
   };
 
   const exportFilteredChallenges = () => {
@@ -1084,6 +1163,52 @@ export function App() {
                   </button>
                 </div>
               )}
+
+              <div className="flex flex-wrap items-center gap-2 rounded-lg border border-gray-200 bg-gray-50 p-2">
+                <span className="text-[11px] font-semibold text-gray-600">Filter presets</span>
+                <input
+                  aria-label="Name for saved filter preset"
+                  value={presetName}
+                  onChange={(event) => setPresetName(event.target.value)}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter') saveCurrentFilterPreset();
+                  }}
+                  maxLength={40}
+                  placeholder="Name this view"
+                  className="w-36 rounded-md border border-gray-200 bg-white px-2 py-1 text-xs"
+                />
+                <button
+                  type="button"
+                  onClick={saveCurrentFilterPreset}
+                  disabled={!presetName.trim()}
+                  className="rounded-md bg-blue-600 px-2.5 py-1 text-xs font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  Save view
+                </button>
+                <select
+                  aria-label="Load saved filter preset"
+                  value={selectedPresetId}
+                  onChange={(event) => applyFilterPreset(event.target.value)}
+                  className="max-w-48 rounded-md border border-gray-200 bg-white px-2 py-1 text-xs"
+                >
+                  <option value="">Load saved view</option>
+                  {filterPresets.map((preset) => (
+                    <option key={preset.id} value={preset.id}>{preset.name}</option>
+                  ))}
+                </select>
+                {selectedPresetId && filterPresets.some((preset) => preset.id === selectedPresetId) && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setFilterPresets((previous) => previous.filter((preset) => preset.id !== selectedPresetId));
+                      setSelectedPresetId('');
+                    }}
+                    className="rounded-md px-2 py-1 text-xs font-semibold text-red-700 hover:bg-red-50"
+                  >
+                    Delete selected view
+                  </button>
+                )}
+              </div>
 
               {/* Category Filter Chips */}
               <div role="group" aria-label="Filter challenges by category" className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
