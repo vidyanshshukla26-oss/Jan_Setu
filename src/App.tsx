@@ -139,6 +139,10 @@ export function App() {
     const value = new URLSearchParams(window.location.search).get('minPopulation');
     return value || '';
   });
+  const [maximumPopulation, setMaximumPopulation] = useState<string>(() => {
+    const value = new URLSearchParams(window.location.search).get('maxPopulation');
+    return value || '';
+  });
   const [sortBy, setSortBy] = useState<ChallengeSort>(readSortParameter);
   const [userRole, setUserRole] = useState<UserRole>(readUserRole);
   const [currentTab, setCurrentTab] = useState<AppTab>('challenges');
@@ -244,6 +248,7 @@ export function App() {
       sdg: selectedSdg === 'All' ? '' : selectedSdg,
       minBounty: minimumBounty,
       minPopulation: minimumPopulation,
+      maxPopulation: maximumPopulation,
       sort: sortBy === 'upvotes' ? '' : sortBy,
       saved: favoritesOnly ? 'true' : '',
       verified: verifiedOnly ? 'true' : '',
@@ -265,6 +270,7 @@ export function App() {
     selectedSdg,
     minimumBounty,
     minimumPopulation,
+    maximumPopulation,
     sortBy,
     favoritesOnly,
     verifiedOnly,
@@ -377,6 +383,7 @@ export function App() {
       if (selectedSdg !== 'All' && String(c.sdgNumber) !== selectedSdg) return false;
       if (minimumBounty && c.bountyAmount < Number(minimumBounty)) return false;
       if (minimumPopulation && c.impactedPopulation < Number(minimumPopulation)) return false;
+      if (maximumPopulation && c.impactedPopulation > Number(maximumPopulation)) return false;
       if (favoritesOnly && !savedChallenges[c.id]) return false;
       if (verifiedOnly && !c.verifiedByOfficial) return false;
       if (showHighPriority && c.severity !== 'Critical' && c.severity !== 'High') return false;
@@ -433,6 +440,7 @@ export function App() {
     selectedSdg,
     minimumBounty,
     minimumPopulation,
+    maximumPopulation,
     sortBy,
     favoritesOnly,
     verifiedOnly,
@@ -525,6 +533,7 @@ export function App() {
     ...(selectedSdg !== 'All' ? [{ label: `SDG ${selectedSdg}`, clear: () => setSelectedSdg('All') }] : []),
     ...(minimumBounty ? [{ label: `Grant ≥ ₹${Number(minimumBounty).toLocaleString()}`, clear: () => setMinimumBounty('') }] : []),
     ...(minimumPopulation ? [{ label: `${Number(minimumPopulation).toLocaleString()}+ impacted`, clear: () => setMinimumPopulation('') }] : []),
+    ...(maximumPopulation ? [{ label: `≤ ${Number(maximumPopulation).toLocaleString()} impacted`, clear: () => setMaximumPopulation('') }] : []),
     ...(favoritesOnly ? [{ label: 'Saved only', clear: () => setFavoritesOnly(false) }] : []),
     ...(verifiedOnly ? [{ label: 'Verified only', clear: () => setVerifiedOnly(false) }] : []),
     ...(showHighPriority ? [{ label: 'High priority', clear: () => setShowHighPriority(false) }] : []),
@@ -624,6 +633,7 @@ export function App() {
                     setSelectedSdg('All');
                     setMinimumBounty('');
                     setMinimumPopulation('');
+                    setMaximumPopulation('');
                     setSortBy('upvotes');
                     setSearchQuery('');
                     setFavoritesOnly(false);
@@ -814,6 +824,20 @@ export function App() {
                       step="1000"
                       value={minimumPopulation}
                       onChange={(event) => setMinimumPopulation(event.target.value)}
+                      className="w-24 bg-transparent font-normal focus:outline-none"
+                      placeholder="Any"
+                    />
+                  </label>
+
+                  <label className="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-gray-50 px-2.5 py-1.5 text-xs font-semibold text-gray-700">
+                    Max impacted
+                    <input
+                      aria-label="Maximum impacted population"
+                      type="number"
+                      min="0"
+                      step="1000"
+                      value={maximumPopulation}
+                      onChange={(event) => setMaximumPopulation(event.target.value)}
                       className="w-24 bg-transparent font-normal focus:outline-none"
                       placeholder="Any"
                     />
@@ -1056,6 +1080,7 @@ export function App() {
                     setSelectedSdg('All');
                     setMinimumBounty('');
                     setMinimumPopulation('');
+                    setMaximumPopulation('');
                     setFavoritesOnly(false);
                     setVerifiedOnly(false);
                     setShowHighPriority(false);
