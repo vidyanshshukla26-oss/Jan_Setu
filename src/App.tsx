@@ -743,6 +743,7 @@ export function App() {
                     <option value="open_for_solutions">Open for solutions</option>
                     <option value="under_review">Under review</option>
                     <option value="pilot_in_progress">Pilot in progress</option>
+                    <option value="grant_allocated">Grant allocated</option>
                     <option value="resolved">Resolved</option>
                   </select>
 
