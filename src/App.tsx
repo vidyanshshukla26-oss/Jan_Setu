@@ -536,6 +536,18 @@ export function App() {
     URL.revokeObjectURL(url);
   };
 
+  const exportFilteredChallengesAsJson = () => {
+    const blob = new Blob([JSON.stringify(filteredChallenges, null, 2)], {
+      type: 'application/json;charset=utf-8',
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'jansetu-challenges.json';
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
   const savedChallengeCount = Object.values(savedChallenges).filter(Boolean).length;
   const highPriorityCount = challenges.filter((challenge) => challenge.severity === 'Critical' || challenge.severity === 'High').length;
   const activeFilters = [
@@ -632,6 +644,15 @@ export function App() {
                 >
                   <Download className="h-3.5 w-3.5" />
                   Export CSV
+                </button>
+                <button
+                  type="button"
+                  onClick={exportFilteredChallengesAsJson}
+                  disabled={filteredChallenges.length === 0}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3.5 py-1.5 text-xs font-semibold text-gray-700 shadow-2xs transition-all hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <Download className="h-3.5 w-3.5" />
+                  Export JSON
                 </button>
                 <button
                   type="button"
