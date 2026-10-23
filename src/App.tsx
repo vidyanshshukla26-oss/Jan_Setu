@@ -1169,6 +1169,17 @@ export function App() {
                 {displayedChallenges.map((challenge) => (
                   <div key={challenge.id} className="relative">
                     <button
+                      type="button"
+                      onClick={async (event) => {
+                        event.stopPropagation();
+                        setShareStatus(await handleShareChallenge(challenge));
+                      }}
+                      aria-label={`Share challenge: ${challenge.title}`}
+                      className="absolute right-12 top-3 z-10 inline-flex h-8 w-8 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-700 shadow-sm transition-colors hover:bg-gray-50"
+                    >
+                      <Share2 className="h-3.5 w-3.5" />
+                    </button>
+                    <button
                       onClick={(event) => {
                         event.stopPropagation();
                         toggleSaveChallenge(challenge.id);
