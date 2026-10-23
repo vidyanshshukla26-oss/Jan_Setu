@@ -34,6 +34,8 @@ import {
   X,
   Download,
   Share2,
+  LayoutGrid,
+  List,
 } from 'lucide-react';
 import { Challenge, Solution, UserRole, AnalyticsSummary, ChallengeCategory, AppTab } from './types';
 import { Navbar } from './components/Navbar';
@@ -121,6 +123,9 @@ export function App() {
   const [shareStatus, setShareStatus] = useState<string>('');
   const [largerText, setLargerText] = useState<boolean>(
     () => localStorage.getItem('jansetu-larger-text') === 'true',
+  );
+  const [compactChallengeView, setCompactChallengeView] = useState<boolean>(
+    () => localStorage.getItem('jansetu-compact-challenge-view') === 'true',
   );
   const [searchQuery, setSearchQuery] = useState<string>(() => {
     const value = new URLSearchParams(window.location.search).get('q');
@@ -246,6 +251,10 @@ export function App() {
     document.documentElement.classList.toggle('larger-text', largerText);
     localStorage.setItem('jansetu-larger-text', String(largerText));
   }, [largerText]);
+
+  useEffect(() => {
+    localStorage.setItem('jansetu-compact-challenge-view', String(compactChallengeView));
+  }, [compactChallengeView]);
 
   useEffect(() => {
     localStorage.setItem(
@@ -933,6 +942,15 @@ export function App() {
 
               <div className="flex flex-wrap items-center gap-2">
                 <button
+                  type="button"
+                  onClick={() => setCompactChallengeView((compact) => !compact)}
+                  aria-pressed={compactChallengeView}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-gray-100 px-2.5 py-1.5 text-[11px] font-semibold text-gray-700 transition-colors hover:bg-gray-200"
+                >
+                  {compactChallengeView ? <LayoutGrid className="h-3.5 w-3.5" /> : <List className="h-3.5 w-3.5" />}
+                  {compactChallengeView ? 'Card view' : 'Compact list'}
+                </button>
+                <button
                   onClick={() => setFavoritesOnly((value) => !value)}
                   aria-pressed={favoritesOnly}
                   className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-semibold ${favoritesOnly ? 'bg-blue-100 text-blue-700 border border-blue-200' : 'bg-gray-100 text-gray-700 border border-gray-200'} transition-colors`}
@@ -1189,7 +1207,10 @@ export function App() {
                 </button>
               </div>
             ) : (
-              <div aria-label={`${filteredChallenges.length} challenges`} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div
+                aria-label={`${filteredChallenges.length} challenges`}
+                className={`grid ${compactChallengeView ? 'grid-cols-1 gap-2' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'}`}
+              >
                 {displayedChallenges.map((challenge) => (
                   <div key={challenge.id} className="relative">
                     <button
@@ -1217,6 +1238,7 @@ export function App() {
                     <ChallengeCard
                       challenge={challenge}
                       isVoting={Boolean(votingChallenges[challenge.id])}
+                      compact={compactChallengeView}
                       onSelect={handleSelectChallenge}
                       onVote={handleVoteChallenge}
                     />

@@ -18,6 +18,7 @@ import { Challenge } from '../types';
 interface ChallengeCardProps {
   challenge: Challenge;
   isVoting?: boolean;
+  compact?: boolean;
   onSelect: (challenge: Challenge) => void;
   onVote: (challengeId: string, e: React.MouseEvent) => void;
 }
@@ -25,6 +26,7 @@ interface ChallengeCardProps {
 export const ChallengeCard: React.FC<ChallengeCardProps> = ({
   challenge,
   isVoting = false,
+  compact = false,
   onSelect,
   onVote,
 }) => {
@@ -79,10 +81,10 @@ export const ChallengeCard: React.FC<ChallengeCardProps> = ({
   return (
     <article
       onClick={() => onSelect(challenge)}
-      className="bg-white border border-gray-200 rounded-xl p-4 flex flex-col justify-between shadow-xs hover:shadow-md hover:border-blue-400 transition-all duration-200 cursor-pointer group"
+      className={`bg-white border border-gray-200 rounded-xl p-4 flex flex-col justify-between shadow-xs hover:shadow-md hover:border-blue-400 transition-all duration-200 cursor-pointer group ${compact ? 'sm:flex-row sm:items-center sm:gap-5' : ''}`}
       id={`challenge-card-${challenge.id}`}
     >
-      <div>
+      <div className={compact ? 'sm:flex-1' : ''}>
         {/* Top Header: Urgency Badge & ID */}
         <div className="flex justify-between items-start mb-2.5">
           <div className="flex items-center gap-1.5">
@@ -152,7 +154,7 @@ export const ChallengeCard: React.FC<ChallengeCardProps> = ({
       </div>
 
       {/* High Density Metric & Progress Section */}
-      <div className="mt-2 pt-2 border-t border-gray-100 space-y-2.5">
+      <div className={`mt-2 pt-2 border-t border-gray-100 space-y-2.5 ${compact ? 'sm:mt-0 sm:w-64 sm:shrink-0 sm:border-l sm:border-t-0 sm:pl-4 sm:pt-0' : ''}`}>
         <div className="space-y-1">
           <div className="flex justify-between text-[11px]">
             <span className="text-gray-400">Solution Maturity</span>
