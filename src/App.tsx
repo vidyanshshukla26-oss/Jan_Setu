@@ -159,6 +159,7 @@ export function App() {
   const [fundedOnly, setFundedOnly] = useState<boolean>(() => new URLSearchParams(window.location.search).get('funded') === 'true');
   const [hasEvidenceOnly, setHasEvidenceOnly] = useState<boolean>(() => new URLSearchParams(window.location.search).get('evidence') === 'true');
   const [aiAnalyzedOnly, setAiAnalyzedOnly] = useState<boolean>(() => new URLSearchParams(window.location.search).get('aiAnalyzed') === 'true');
+  const [challengePageSize, setChallengePageSize] = useState<number>(CHALLENGES_PER_PAGE);
   const [visibleChallengeCount, setVisibleChallengeCount] = useState<number>(CHALLENGES_PER_PAGE);
   const [savedChallenges, setSavedChallenges] = useState<Record<string, boolean>>(readSavedChallenges);
   const [recentChallengeIds, setRecentChallengeIds] = useState<string[]>(readRecentChallenges);
@@ -473,7 +474,7 @@ export function App() {
     });
 
   useEffect(() => {
-    setVisibleChallengeCount(CHALLENGES_PER_PAGE);
+    setVisibleChallengeCount(challengePageSize);
   }, [
     searchQuery,
     selectedCategory,
@@ -493,6 +494,7 @@ export function App() {
     fundedOnly,
     hasEvidenceOnly,
     aiAnalyzedOnly,
+    challengePageSize,
   ]);
 
   const displayedChallenges = filteredChallenges.slice(0, visibleChallengeCount);
@@ -941,6 +943,19 @@ export function App() {
               </div>
 
               <div className="flex flex-wrap items-center gap-2">
+                <label className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-gray-50 px-2.5 py-1.5 text-[11px] font-semibold text-gray-700">
+                  Results per load
+                  <select
+                    aria-label="Challenges to show per load"
+                    value={challengePageSize}
+                    onChange={(event) => setChallengePageSize(Number(event.target.value))}
+                    className="bg-transparent font-normal focus:outline-none"
+                  >
+                    <option value={9}>9</option>
+                    <option value={18}>18</option>
+                    <option value={36}>36</option>
+                  </select>
+                </label>
                 <button
                   type="button"
                   onClick={() => setCompactChallengeView((compact) => !compact)}
@@ -1274,10 +1289,10 @@ export function App() {
               <div className="flex justify-center">
                 <button
                   type="button"
-                  onClick={() => setVisibleChallengeCount((count) => count + CHALLENGES_PER_PAGE)}
+                  onClick={() => setVisibleChallengeCount((count) => count + challengePageSize)}
                   className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-xs font-semibold text-gray-700 shadow-2xs transition-colors hover:bg-gray-50"
                 >
-                  Load {Math.min(CHALLENGES_PER_PAGE, filteredChallenges.length - displayedChallenges.length)} more challenges
+                  Load {Math.min(challengePageSize, filteredChallenges.length - displayedChallenges.length)} more challenges
                 </button>
               </div>
             )}
