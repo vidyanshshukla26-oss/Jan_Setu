@@ -498,6 +498,10 @@ export function App() {
   ]);
 
   const displayedChallenges = filteredChallenges.slice(0, visibleChallengeCount);
+  const filteredImpactPopulation = filteredChallenges.reduce(
+    (total, challenge) => total + challenge.impactedPopulation,
+    0,
+  );
 
   const handleOpenSubmitSolution = (challenge: Challenge) => {
     setTargetChallengeForSolution(challenge);
@@ -1168,9 +1172,12 @@ export function App() {
 
             {/* Challenge Cards Grid */}
             {!loading && !loadError && (
-              <p className="text-xs font-semibold text-gray-600" aria-live="polite">
-                Showing {displayedChallenges.length} of {filteredChallenges.length} matching challenges
-              </p>
+              <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-semibold text-gray-600" aria-live="polite">
+                <p>Showing {displayedChallenges.length} of {filteredChallenges.length} matching challenges</p>
+                <p>
+                  Sum of reported affected populations: {filteredImpactPopulation.toLocaleString()}
+                </p>
+              </div>
             )}
             <p role="status" aria-live="polite" className="sr-only">
               {loading ? 'Loading challenges.' : loadError ? loadError : `${filteredChallenges.length} challenges found.`}
